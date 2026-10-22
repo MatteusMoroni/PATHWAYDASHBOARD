@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>PATHWAY · Painéis (MVP)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="dashboards-mvp/comum.css">
+<style>
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .card{background:#fff;border:1px solid var(--line);border-top:4px solid var(--navy);padding:20px;text-decoration:none;color:var(--ink);display:block}
+  .card:hover{border-top-color:var(--gold-dark)}
+  .card h3{font-family:var(--serif);font-weight:400;font-size:21px;margin:0 0 6px;color:var(--navy)}
+  .card p{margin:0;color:var(--ink-soft);font-size:15px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="mark"><b>BYU</b><span>PATHWAY</span></div>
+    <div class="titles">
+      <h1>Painéis de acompanhamento</h1>
+      <p>MVP de demonstração</p>
+    </div>
+  </div>
+</header>
+<div class="rule"></div>
+
+<main>
+  <div class="aviso">Dados simulados para demonstração. Nenhum nome ou número é real.</div>
+
+  <section>
+    <h2>Escolha um painel</h2>
+    <p class="sub">Cada painel abre em uma página própria.</p>
+    <div class="cards">
+      <a class="card" href="Dashboard.html">
+        <h3>Acompanhamento da turma</h3>
+        <p>App da dupla: importa o <em>Export Student List</em> e registra contatos e presenças.</p>
+      </a>
+      <a class="card" href="dashboards-mvp/lz.html">
+        <h3>Painel do LZ</h3>
+        <p>Visão das duplas de uma zona.</p>
+      </a>
+      <a class="card" href="dashboards-mvp/lider.html">
+        <h3>Painel do líder</h3>
+        <p>Visão consolidada de todas as zonas.</p>
+      </a>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

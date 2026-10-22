@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Painel do líder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="comum.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="mark"><b>BYU</b><span>PATHWAY</span></div>
+    <div class="titles">
+      <h1>Visão das zonas · painel do líder</h1>
+      <p id="subtitulo"></p>
+    </div>
+    <div class="top-right">
+      <a href="lz.html">Painel do LZ →</a>
+    </div>
+  </div>
+</header>
+<div class="rule"></div>
+
+<main>
+  <div class="aviso">Dados simulados para demonstração. Nenhum nome ou número é real.</div>
+
+  <!-- 1. a resposta em 5 segundos -->
+  <section>
+    <h2>Como estão as zonas nesta semana</h2>
+    <p class="sub">Os 100 quadradinhos representam "de cada 100 alunos". Passe o mouse para ver os números.</p>
+    <div class="hero">
+      <div class="frases" id="frases"></div>
+      <div id="cem"></div>
+    </div>
+  </section>
+
+  <!-- 2. os três números combinados -->
+  <section>
+    <h2>Os três números da semana</h2>
+    <p class="meta-leg"><i></i> A marca dourada na barra é a meta sugerida.</p>
+    <div class="metricas" id="metricas"></div>
+  </section>
+
+  <!-- 3. o que fazer, zona por zona -->
+  <section>
+    <h2>Zonas</h2>
+    <p class="sub">Quem precisa de mais apoio aparece primeiro. Toque em "Abrir a zona" para ver as duplas dela.</p>
+    <div class="lista" id="zonas"></div>
+  </section>
+
+  <!-- 4. está melhorando? -->
+  <section>
+    <h2>Como foi nas últimas semanas</h2>
+    <p class="sub">Todas as zonas juntas. A coluna escura é esta semana. A linha tracejada é a meta.</p>
+    <div class="graficos" id="tendencia"></div>
+  </section>
+
+  <section>
+    <details class="extra">
+      <summary>Ver todos os números em tabela</summary>
+      <div class="tabela-wrap"><table id="tabela"></table></div>
+    </details>
+  </section>
+
+  <section>
+    <details class="extra" open>
+      <summary>Entenda os números</summary>
+      <dl class="glossario">
+        <dt>Por que porcentagem?</dt>
+        <dd>As zonas têm tamanhos diferentes. "79%" quer dizer "79 de cada 100 alunos", o que permite comparar uma zona de 60 alunos com uma de 120.
+          <small>A porcentagem sai sempre da soma de todos os alunos, não da média das duplas. Assim uma turma pequena não pesa o mesmo que uma grande.</small></dd>
+        <dt>Aluno em dia</dt>
+        <dd>Está acessando o Canvas e vindo aos encontros, sem nenhum alerta.
+          <small>Alerta: 7 dias ou mais sem Canvas, faltou ao último encontro, ou mais de 2 faltas no bloco.</small></dd>
+        <dt>Contato</dt>
+        <dd>Conta só quando a dupla registrou uma conversa com o aluno nos últimos 7 dias.</dd>
+        <dt>Alunos ativos</dt>
+        <dd>De cada 100 alunos que começaram o bloco, quantos continuam.</dd>
+        <dt>Entraram no Canvas</dt>
+        <dd>De cada 100 alunos ativos, quantos abriram o Canvas nos últimos 7 dias.</dd>
+        <dt>Presença nos encontros</dt>
+        <dd>De cada 100 chamadas do bloco, quantas foram presença. Falta justificada não conta contra.</dd>
+        <dt>Cores das zonas</dt>
+        <dd>A mesma régua das duplas, aplicada à zona inteira. <b>Precisa de apoio:</b> menos de ${REGRAS.emDiaVermelho}% em dia ou menos de ${REGRAS.contatoVermelho}% dos alertas com contato. <b>Acompanhar:</b> menos de ${REGRAS.emDiaAmarelo}% ou menos de ${REGRAS.contatoAmarelo}%. <b>Tudo bem:</b> as duas metas atingidas.
+          <small>Uma zona "Tudo bem" pode ter uma dupla que precisa de apoio. Por isso cada cartão mostra as duplas por cor.</small></dd>
+      </dl>
+    </details>
+  </section>
+</main>
+<div id="tip" class="tip" hidden></div>
+
+<script src="comum.js"></script>
+<script>
+document.querySelectorAll('.glossario dd').forEach(dd => {
+  dd.innerHTML = dd.innerHTML.replace(/\$\{REGRAS\.(\w+)\}/g, (_, k) => REGRAS[k]);
+});
+
+const todas = ZONAS.flatMap(z => z.duplas);
+const k = somar(todas, W), k0 = somar(todas, W - 1);
+const P = (kk, a, b) => pct(kk[a], kk[b]);
+const conta = (arr, n) => arr.filter(x => x === n).length;
+const duplasNa = (q, n) => ({ red:`${q} ${q === 1 ? 'precisa' : 'precisam'} de apoio`, yel:`${q} para acompanhar`,
+                              grn:`${q} ${q === 1 ? 'está' : 'estão'} bem`, gry:`${q} sem dados recentes` })[n];
+
+const zonas = ZONAS.map(z => {
+  const kz = somar(z.duplas, W), kz0 = somar(z.duplas, W - 1);
+  return { z, kz, kz0, ap:apoio(kz), ns:z.duplas.map(d => apoio(somar([d], W), d).nivel) };
+}).sort((a, b) => (ORDEM_NIVEL[a.ap.nivel] - ORDEM_NIVEL[b.ap.nivel]) || (P(a.kz,'emDia','ativos') - P(b.kz,'emDia','ativos')));
+
+document.getElementById('subtitulo').textContent =
+  `${ZONAS.length} zonas · ${todas.length} duplas · ${fmt(k.total)} alunos · semana encerrada em ${dataBR(SEMANAS[W])}`;
+
+/* 1. frases + 100 quadradinhos */
+const emDia = P(k,'emDia','ativos'), emDia0 = P(k0,'emDia','ativos');
+const semContatoPct = 100 - P(k,'contatados','alertas');
+const zonasApoio = zonas.filter(x => x.ap.nivel === 'red').length;
+document.getElementById('frases').innerHTML = `
+  <p class="frase"><b>${emDia}%</b> dos alunos ativos estão em dia.
+    <small>Cerca de ${emCada10(emDia)} em cada 10. Na semana passada: ${emDia0}%.</small></p>
+  <p class="frase ${semContatoPct ? 'alerta' : 'bem'}"><b>${emCada10(semContatoPct)} em cada 10</b> alunos em alerta ainda não receberam contato.
+    <small>${fmt(k.alertas - k.contatados)} de ${fmt(k.alertas)} alunos em alerta, somando todas as zonas.</small></p>
+  <p class="frase ${zonasApoio ? 'alerta' : 'bem'}"><b>${zonasApoio} de ${ZONAS.length}</b> zonas precisam de apoio.
+    <small>${conta(zonas.flatMap(x => x.ns), 'red')} de ${todas.length} duplas precisam de apoio no total.</small></p>`;
+document.getElementById('cem').innerHTML = cemAlunos(k);
+
+/* 2. os três KPIs combinados, em porcentagem */
+const fmtPct = v => v + '%';
+document.getElementById('metricas').innerHTML = `
+  <div class="metrica">
+    <h3>Alunos ativos</h3><p class="pergunta">De cada 100 alunos, quantos continuam no curso?</p>
+    <p class="grande">${P(k,'ativos','total')}% <span>${fmt(k.ativos)} de ${fmt(k.total)}</span></p>
+    ${barra({rot:'Continuam no curso', n:k.ativos, de:k.total, meta:REGRAS.metaAtivos, modo:'pct'})}
+    ${mudanca(P(k,'ativos','total'), P(k0,'ativos','total'), true, fmtPct)}
+  </div>
+  <div class="metrica">
+    <h3>Entraram no Canvas</h3><p class="pergunta">De cada 100 alunos ativos, quantos abriram o Canvas em 7 dias?</p>
+    <p class="grande">${P(k,'canvas','ativos')}% <span>${fmt(k.canvas)} de ${fmt(k.ativos)}</span></p>
+    ${barra({rot:'Abriram o Canvas', n:k.canvas, de:k.ativos, meta:REGRAS.metaCanvas, modo:'pct'})}
+    ${mudanca(P(k,'canvas','ativos'), P(k0,'canvas','ativos'), true, fmtPct)}
+  </div>
+  <div class="metrica">
+    <h3>Presença nos encontros</h3><p class="pergunta">De cada 100 chamadas, quantas foram presença?</p>
+    <p class="grande">${P(k,'presP','presM')}% <span>${fmt(k.presP)} de ${fmt(k.presM)}</span></p>
+    ${barra({rot:'Presenças no bloco', n:k.presP, de:k.presM, meta:REGRAS.metaPresenca, modo:'pct'})}
+    ${mudanca(P(k,'presP','presM'), P(k0,'presP','presM'), true, fmtPct)}
+  </div>`;
+
+/* 3. cartões das zonas */
+document.getElementById('zonas').innerHTML = zonas.map(({z, kz, ap, ns}) => `
+  <article class="item ${ap.nivel}">
+    <div class="item-topo">
+      <div><h3>${esc(z.nome)}</h3><p>LZ: ${esc(z.lz)} · ${z.duplas.length} duplas · ${fmt(kz.ativos)} alunos ativos</p></div>
+      ${pillNivel(ap)}
+    </div>
+    <p class="porque">Por quê: ${esc(ap.motivos.join('; '))}.</p>
+    <div class="dots" aria-label="duplas por situação">
+      ${['red','gry','yel','grn'].filter(n => ns.includes(n)).map(n => `<span><i class="p ${n}"></i>${duplasNa(conta(ns, n), n)}</span>`).join('')}
+    </div>
+    ${barra({rot:'Alunos em dia', n:kz.emDia, de:kz.ativos, meta:REGRAS.emDiaAmarelo, modo:'pct'})}
+    ${barra({rot:'Alertas com contato', n:kz.contatados, de:kz.alertas, meta:REGRAS.contatoAmarelo, modo:'pct'})}
+    ${barra({rot:'Entraram no Canvas', n:kz.canvas, de:kz.ativos, meta:REGRAS.metaCanvas, modo:'pct'})}
+    ${barra({rot:'Presença nos encontros', n:kz.presP, de:kz.presM, meta:REGRAS.metaPresenca, modo:'pct'})}
+    <div class="acao"><b>O que fazer:</b> ${esc(acaoZona(z, kz, ns))}</div>
+    <a class="abrir" href="lz.html?zona=${z.id}">Abrir a ${esc(z.nome)} →</a>
+  </article>`).join('');
+
+/* 4. tendência */
+document.getElementById('tendencia').innerHTML = tendencias(todas);
+
+/* tabela opcional */
+document.getElementById('tabela').innerHTML = `
+  <thead><tr><th>Zona</th><th class="num">Ativos</th><th class="num">Em dia</th><th class="num">Entraram no Canvas</th>
+    <th class="num">Presença</th><th class="num">Faltaram ao último</th><th class="num">Alertas com contato</th><th>Situação</th></tr></thead>
+  <tbody>${zonas.map(({z, kz, ap}) => `<tr>
+    <td>${esc(z.nome)} <span class="muted">· ${z.duplas.length} duplas</span></td>
+    <td class="num">${P(kz,'ativos','total')}%</td><td class="num">${P(kz,'emDia','ativos')}%</td>
+    <td class="num">${P(kz,'canvas','ativos')}%</td><td class="num">${P(kz,'presP','presM')}%</td>
+    <td class="num">${P(kz,'faltou','ativos')}%</td><td class="num">${P(kz,'contatados','alertas')}%</td>
+    <td>${pillNivel(ap)}</td></tr>`).join('')}
+  </tbody>`;
+</script>
+</body>
+</html>

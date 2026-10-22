@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>PC 102 — Acompanhamento de alunos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --navy:#0E2C51;
+    --navy-2:#183C68;
+    --gold:#FFC328;
+    --gold-dark:#C29D32;
+    --gold-ink:#7A5E0A;
+    --paper:#F2F4F7;
+    --line:#D8DEE6;
+    --ink:#16202E;
+    --ink-soft:#5A6675;
+    --alert:#A62B22;
+    --alert-bg:#FBECEA;
+    --warn-bg:#FFF6DC;
+    --ok:#1D6B47;
+    --ok-bg:#E9F3ED;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
+  button{font:inherit;cursor:pointer}
+  input,select,textarea{font:inherit;color:inherit}
+  a{color:var(--navy)}
+
+  /* ---------- cabeçalho ---------- */
+  header.top{background:var(--navy);color:#fff;position:relative}
+  .top-inner{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;align-items:flex-end;gap:22px;min-height:96px}
+  .mark{background:var(--gold);color:var(--navy);padding:12px 16px 10px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;flex:none}
+  .mark b{font-family:var(--serif);font-size:23px;letter-spacing:.02em;line-height:1}
+  .mark span{font-family:var(--serif);font-size:10.5px;letter-spacing:.34em;margin-top:4px}
+  .titles{padding:16px 0 18px}
+  .titles h1{font-family:var(--serif);font-size:26px;font-weight:400;margin:0;line-height:1.15}
+  .titles p{margin:5px 0 0;color:#AFC0D6;font-size:13px}
+  .rule{height:9px;background:var(--gold-dark)}
+
+  /* ---------- abas ---------- */
+  nav.tabs{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+  .tabs-inner{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;gap:4px;overflow-x:auto}
+  .tab{background:none;border:0;border-bottom:3px solid transparent;padding:13px 14px;color:var(--ink-soft);white-space:nowrap;font-size:14.5px}
+  .tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--gold);font-weight:600}
+  .tab .pill{background:var(--alert);color:#fff;border-radius:9px;font-size:11px;padding:1px 6px;margin-left:6px;font-weight:700;vertical-align:1px}
+
+  main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
+  section[hidden]{display:none}
+  h2{font-family:var(--serif);font-weight:400;font-size:20px;margin:0 0 3px}
+  .sub{color:var(--ink-soft);font-size:13px;margin:0 0 16px}
+
+  /* ---------- indicadores ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+  .kpi{background:#fff;border:1px solid var(--line);border-top:4px solid var(--navy);padding:13px 14px}
+  .kpi.hot{border-top-color:var(--alert)}
+  .kpi.warm{border-top-color:var(--gold)}
+  .kpi.cool{border-top-color:var(--ok)}
+  .kpi .n{font-family:var(--serif);font-size:34px;line-height:1;display:block}
+  .kpi .l{font-size:12.5px;color:var(--ink-soft);margin-top:6px;display:block}
+
+  /* ---------- lista de atenção ---------- */
+  .board{background:#fff;border:1px solid var(--line)}
+  .board-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .board-head h3{margin:0;font-family:var(--serif);font-weight:400;font-size:17px}
+  .row{display:flex;gap:14px;align-items:center;padding:12px 16px;border-bottom:1px solid #EDF0F4}
+  .row:last-child{border-bottom:0}
+  .row:hover{background:#FAFBFD}
+  .who{flex:1;min-width:0}
+  .who b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .who small{color:var(--ink-soft);font-size:12.5px}
+  .flags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .flag{font-size:12px;padding:2px 8px;border-radius:2px;white-space:nowrap}
+  .flag.red{background:var(--alert-bg);color:var(--alert)}
+  .flag.yel{background:var(--warn-bg);color:var(--gold-ink)}
+  .flag.grn{background:var(--ok-bg);color:var(--ok)}
+  .flag.gry{background:#EEF1F5;color:var(--ink-soft)}
+
+  /* ---------- botões ---------- */
+  .btn{background:var(--navy);color:#fff;border:1px solid var(--navy);padding:8px 14px;border-radius:2px}
+  .btn:hover{background:var(--navy-2)}
+  .btn.gold{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:600}
+  .btn.gold:hover{background:#F0B310}
+  .btn.ghost{background:#fff;color:var(--navy)}
+  .btn.ghost:hover{background:#F4F7FB}
+  .btn.sm{padding:5px 10px;font-size:13px}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  /* ---------- importação ---------- */
+  .drop{border:2px dashed var(--line);background:#fff;padding:26px 20px;text-align:center}
+  .drop.over{border-color:var(--gold);background:#FFFCF2}
+  .drop h3{font-family:var(--serif);font-weight:400;font-size:19px;margin:0 0 6px}
+  .drop p{margin:0 0 14px;color:var(--ink-soft);font-size:13.5px}
+
+  /* ---------- tabela ---------- */
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+  .tools input[type=search],.tools select,.fld{border:1px solid var(--line);padding:7px 10px;border-radius:2px;background:#fff}
+  .tools input[type=search]{flex:1;min-width:180px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line)}
+  th{text-align:left;font-size:12px;color:var(--ink-soft);font-weight:600;padding:10px 12px;border-bottom:2px solid var(--line);background:#F8FAFC;white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid #EDF0F4;font-size:14px}
+  tbody tr:hover{background:#FAFBFD;cursor:pointer}
+  th.num,td.num{text-align:right}
+  .name-cell b{font-weight:600}
+  .name-cell small{display:block;color:var(--ink-soft);font-size:12px}
+
+  /* ---------- painel lateral ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(14,44,81,.45);z-index:60}
+  .sheet{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:#fff;z-index:61;overflow-y:auto;box-shadow:-8px 0 30px rgba(14,44,81,.2)}
+  .sheet-head{background:var(--navy);color:#fff;padding:18px 22px;position:sticky;top:0;z-index:2}
+  .sheet-head h3{margin:0;font-family:var(--serif);font-weight:400;font-size:21px}
+  .sheet-head p{margin:4px 0 0;color:#AFC0D6;font-size:13px}
+  .sheet-head .x{position:absolute;top:14px;right:16px;background:none;border:0;color:#fff;font-size:22px;line-height:1;padding:4px 8px}
+  .sheet-body{padding:20px 22px 60px}
+  .blk{margin-bottom:26px}
+  .blk h4{font-size:12.5px;text-transform:none;color:var(--ink-soft);margin:0 0 9px;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .kv{display:grid;grid-template-columns:118px 1fr;gap:5px 12px;font-size:13.5px}
+  .kv dt{color:var(--ink-soft)}
+  .kv dd{margin:0;word-break:break-word}
+  .stack{display:flex;flex-direction:column;gap:9px}
+  .fld{width:100%}
+  textarea.fld{min-height:66px;resize:vertical}
+  .log{border-left:3px solid var(--gold);background:#FCFDFE;padding:9px 12px;margin-bottom:9px;font-size:13.5px}
+  .log b{font-size:12.5px;color:var(--navy)}
+  .log .meta{color:var(--ink-soft);font-size:12px;margin-bottom:3px}
+  .log p{margin:4px 0 0;white-space:pre-wrap}
+  .del{background:none;border:0;color:var(--ink-soft);font-size:12px;text-decoration:underline;padding:0}
+
+  /* ---------- chamada ---------- */
+  .att-row{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid #EDF0F4}
+  .att-row b{flex:1;font-weight:500;font-size:14px}
+  .seg{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden;flex:none}
+  .seg button{background:#fff;border:0;border-right:1px solid var(--line);padding:6px 11px;font-size:13px;color:var(--ink-soft)}
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed="true"]{color:#fff;font-weight:600}
+  .seg button.p[aria-pressed="true"]{background:var(--ok)}
+  .seg button.f[aria-pressed="true"]{background:var(--alert)}
+  .seg button.j[aria-pressed="true"]{background:var(--gold-dark)}
+
+  /* ---------- matriz de presença ---------- */
+  .legenda{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:10px;font-size:13px;color:var(--ink-soft)}
+  .legenda span{display:flex;align-items:center;gap:6px}
+  .chip{width:22px;height:22px;border-radius:2px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:1px solid var(--line);background:#fff;color:#B6BFCA}
+  .chip.P{background:var(--ok);border-color:var(--ok);color:#fff}
+  .chip.F{background:var(--alert);border-color:var(--alert);color:#fff}
+  .chip.J{background:var(--gold-dark);border-color:var(--gold-dark);color:#fff}
+  .matriz-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line)}
+  table.matriz{border-collapse:separate;border-spacing:0;width:auto;min-width:100%;border:0}
+  table.matriz th,table.matriz td{border-bottom:1px solid #EDF0F4;padding:0}
+  table.matriz th.fix,table.matriz td.fix{position:sticky;left:0;z-index:2;background:#fff;border-right:2px solid var(--line);text-align:left;padding:8px 12px;min-width:190px;max-width:230px}
+  table.matriz thead th{background:#F8FAFC;border-bottom:2px solid var(--line);vertical-align:bottom;padding:8px 6px;position:sticky;top:0;z-index:1}
+  table.matriz thead th.fix{z-index:3;background:#F8FAFC;vertical-align:bottom;font-size:12px;color:var(--ink-soft)}
+  th.col{min-width:74px;text-align:center}
+  th.col .d{display:block;font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:400}
+  th.col .t{display:block;font-size:11px;color:var(--ink-soft);max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:1px auto 0}
+  th.col .cnt{display:block;font-size:11px;color:var(--ink-soft);margin:3px 0 4px;font-weight:400}
+  .mini{background:none;border:1px solid var(--line);border-radius:2px;font-size:10.5px;padding:1px 5px;color:var(--ink-soft);margin:0 1px}
+  .mini:hover{background:#EEF2F7;color:var(--navy)}
+  td.nome{font-size:13.5px}
+  td.nome small{display:block;color:var(--ink-soft);font-size:11px}
+  td.cel{text-align:center;padding:3px}
+  .mk{width:34px;height:30px;border:1px solid var(--line);border-radius:2px;background:#fff;color:#C3CBD6;font-size:13px;font-weight:700}
+  .mk:hover{border-color:var(--navy)}
+  .mk.P{background:var(--ok);border-color:var(--ok);color:#fff}
+  .mk.F{background:var(--alert);border-color:var(--alert);color:#fff}
+  .mk.J{background:var(--gold-dark);border-color:var(--gold-dark);color:#fff}
+  td.fim,th.fim{text-align:center;min-width:56px;font-size:13px;border-left:2px solid var(--line);background:#FBFCFD;padding:8px 6px}
+  td.fim b{color:var(--alert)}
+  tr.desist td.fix{color:var(--ink-soft)}
+  .snap{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid #EDF0F4;font-size:13.5px}
+  .snap:last-child{border-bottom:0}
+  .snap small{color:var(--ink-soft);display:block;font-size:12px}
+  .empty{background:#fff;border:1px dashed var(--line);padding:34px 20px;text-align:center;color:var(--ink-soft)}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;background:var(--navy);color:#fff;padding:11px 20px;border-radius:2px;z-index:90;box-shadow:0 6px 20px rgba(14,44,81,.3);font-size:14px}
+  .note{background:#fff;border-left:4px solid var(--gold);padding:12px 15px;font-size:13.5px;color:var(--ink-soft);margin-bottom:18px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* ---------- sinal da turma (semáforo) ---------- */
+  .sinal{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;font-size:12px;font-weight:700;padding:3px 10px 3px 8px;border-radius:999px;white-space:nowrap;flex:none}
+  .sinal::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+  .sinal.red{background:var(--alert-bg);color:var(--alert)}
+  .sinal.yel{background:var(--warn-bg);color:var(--gold-ink)}
+  .sinal.grn{background:var(--ok-bg);color:var(--ok)}
+  .sinal.gry{background:#EEF1F5;color:var(--ink-soft)}
+  .dotc{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;background:#B6BFCA}
+  .dotc.red{background:var(--alert)}
+  .dotc.yel{background:var(--gold)}
+  .dotc.grn{background:var(--ok)}
+  .why{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.3}
+  .muted{color:var(--ink-soft)}
+  .flag.blu{background:#EAF1FA;color:var(--navy)}
+
+  /* ---------- painel clicável ---------- */
+  button.kpi{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%;border-radius:0;transition:box-shadow .15s,transform .15s}
+  button.kpi:hover:not(:disabled){box-shadow:0 6px 18px rgba(14,44,81,.12);transform:translateY(-1px)}
+  button.kpi:disabled{cursor:default}
+  .kpi .go{display:block;margin-top:10px;font-size:12px;font-weight:600;color:var(--navy)}
+  button.kpi:disabled .go{visibility:hidden}
+  .semaf{background:#fff;border:1px solid var(--line);padding:14px 16px 16px;margin-bottom:22px}
+  .semaf-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px 14px;flex-wrap:wrap;margin-bottom:10px}
+  .semaf-head h3{margin:0;font-family:var(--serif);font-weight:400;font-size:17px}
+  .semaf-head small,.hint{color:var(--ink-soft);font-size:12.5px}
+  .semaf-bar{display:flex;gap:2px;height:10px;border-radius:5px;overflow:hidden;background:#EEF1F5;margin-bottom:12px}
+  .semaf-bar i{display:block;height:100%}
+  .semaf-bar i.red{background:var(--alert)}
+  .semaf-bar i.yel{background:var(--gold)}
+  .semaf-bar i.grn{background:var(--ok)}
+  .semaf-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .semaf-btn{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:2px;padding:10px 12px;text-align:left;color:inherit}
+  .semaf-btn:hover{border-color:var(--navy);background:#FAFBFD}
+  .semaf-btn b{font-family:var(--serif);font-size:26px;font-weight:400;line-height:1;min-width:28px}
+  .semaf-btn .d{font-size:12px;color:var(--ink-soft);line-height:1.35}
+  .semaf-btn strong{display:block;color:var(--ink);font-size:13.5px}
+  .row{cursor:pointer}
+  .row.sig-red{box-shadow:inset 4px 0 0 var(--alert)}
+  .row.sig-yel{box-shadow:inset 4px 0 0 var(--gold)}
+  .row.sig-grn{box-shadow:inset 4px 0 0 var(--ok)}
+  .acts{display:flex;gap:6px;flex:none;align-items:center}
+  .btn.wa{background:#fff;color:var(--ok);border-color:#BFD9C9;text-decoration:none;display:inline-block}
+  .btn.wa:hover{background:var(--ok-bg)}
+  .count-pill{font-size:12.5px;color:var(--ink-soft)}
+  .alerta{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:16px;text-align:left;font:inherit;color:inherit;background:#EAF1FA;border:1px solid #C9D8EA;border-left:4px solid var(--navy);border-radius:0;padding:12px 16px;cursor:pointer;transition:box-shadow .15s}
+  .alerta:hover{box-shadow:0 6px 18px rgba(14,44,81,.12)}
+  .alerta .badge{background:var(--navy);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;padding:3px 8px;border-radius:2px;flex:none}
+  .alerta .txt{flex:1;min-width:0;font-size:13.5px;color:var(--ink-soft)}
+  .alerta .txt strong{display:block;color:var(--ink);font-size:14.5px;margin-bottom:2px}
+  .alerta .go{font-size:12.5px;font-weight:600;color:var(--navy);flex:none}
+  @media (max-width:760px){ .alerta{flex-wrap:wrap} .alerta .go{margin-left:auto} }
+
+  /* ---------- alunos ---------- */
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .chipf{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;padding:6px 12px;border-radius:999px;font-size:13px;color:var(--ink)}
+  .chipf:hover{border-color:var(--navy)}
+  .chipf .c{font-weight:700;color:var(--ink-soft)}
+  .chipf[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .chipf[aria-pressed="true"] .c{color:#fff}
+  .filtro-ativo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:#EAF1FA;border:1px solid #C9D8EA;padding:9px 12px;margin-bottom:12px;font-size:13.5px}
+  .link{background:none;border:0;padding:0;color:var(--navy);text-decoration:underline;font-size:13px;font-weight:600}
+  .count{font-size:12.5px;color:var(--ink-soft);margin:0 0 8px}
+  th.sort{cursor:pointer;user-select:none}
+  th.sort:hover{color:var(--navy)}
+  th.sort .arr{color:var(--navy)}
+  tbody tr.sig-red td:first-child{box-shadow:inset 4px 0 0 var(--alert)}
+  tbody tr.sig-yel td:first-child{box-shadow:inset 4px 0 0 var(--gold)}
+  tbody tr.sig-grn td:first-child{box-shadow:inset 4px 0 0 var(--ok)}
+  .att{display:inline-flex;gap:3px}
+  .att i{width:18px;height:18px;border-radius:2px;font-size:10px;font-style:normal;font-weight:700;display:inline-flex;align-items:center;justify-content:center;background:#EEF1F5;color:#AEB7C2}
+  .att i.P{background:var(--ok);color:#fff}
+  .att i.F{background:var(--alert);color:#fff}
+  .att i.J{background:var(--gold-dark);color:#fff}
+
+  /* ---------- chamada ---------- */
+  .chamada{background:#fff;border:1px solid var(--line);margin-bottom:26px}
+  .ch-head{display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;padding:14px 16px}
+  .ch-nav{display:flex;align-items:center;gap:8px}
+  .ch-nav h3{margin:0;font-family:var(--serif);font-weight:400;font-size:19px}
+  .ch-stats{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-soft)}
+  .ch-stats b{display:block;font-family:var(--serif);font-weight:400;font-size:22px;color:var(--ink);line-height:1.1}
+  .ch-stats .p b{color:var(--ok)}
+  .ch-stats .f b{color:var(--alert)}
+  .ch-stats .j b{color:var(--gold-ink)}
+  .prog{height:5px;background:#EEF1F5}
+  .prog i{display:block;height:100%;background:var(--gold);transition:width .2s}
+  .ch-tools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line);background:#FBFCFD;font-size:13px;color:var(--ink-soft)}
+  .ch-list{display:grid;grid-template-columns:1fr 1fr}
+  .ch-list .att-row:nth-child(odd){border-right:1px solid #EDF0F4}
+  .att-row b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .att-row b small{font-weight:400;color:var(--ink-soft)}
+  .seg button{min-width:40px;padding:7px 0;font-weight:600}
+  .seg button:hover{background:#F4F7FB}
+  h3.secao{font-family:var(--serif);font-weight:400;font-size:17px;margin:0}
+  th.col.sel,td.cel.sel{background:#FFF8E1}
+  .sel-enc{background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;display:block;width:100%}
+  .sel-enc:hover .d{text-decoration:underline}
+
+  /* ---------- contatos ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  .stat{background:#fff;border:1px solid var(--line);border-top:4px solid var(--navy);padding:12px 14px;text-align:left;color:inherit;font:inherit;border-radius:0}
+  .stat b{display:block;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.05}
+  .stat span{font-size:12.5px;color:var(--ink-soft)}
+  button.stat{cursor:pointer;border-top-color:var(--alert)}
+  button.stat:hover{box-shadow:0 6px 18px rgba(14,44,81,.12)}
+  .stat .go{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-top:6px}
+  .dia{display:flex;justify-content:space-between;gap:10px;padding:8px 16px;background:#F8FAFC;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+  .ct{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-bottom:1px solid #EDF0F4;cursor:pointer}
+  .ct:hover{background:#FAFBFD}
+  .ct .dotc{margin-top:6px}
+  .ct-body{flex:1;min-width:0}
+  .ct-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ct-top b{font-weight:600}
+  .canal{font-size:12px;color:var(--ink-soft);border:1px solid var(--line);padding:1px 7px;border-radius:2px}
+  .ct p{margin:5px 0 0;font-size:13.5px}
+  .ficha-sinal{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+  @media (max-width:760px){
+    .semaf-btns{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr 1fr}
+    .ch-list{grid-template-columns:1fr}
+    .ch-list .att-row:nth-child(odd){border-right:0}
+    .row{flex-wrap:wrap}
+    .row .flags{order:3;width:100%;justify-content:flex-start}
+    .acts{margin-left:auto}
+  }
+  @media (max-width:760px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .cols{grid-template-columns:1fr}
+    .titles h1{font-size:21px}
+    .hide-sm{display:none}
+    main{padding:16px 14px 60px}
+    .top-inner{padding:0 14px}
+    .tabs-inner{padding:0 14px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="mark"><b>BYU</b><span>PATHWAY</span></div>
+    <div class="titles">
+      <h1 id="turmaNome">PC 102 — Acompanhamento de alunos</h1>
+      <p id="turmaSub">Nenhuma lista importada ainda</p>
+      <p id="saveInfo" style="margin:3px 0 0;font-size:12px;color:#8FA6C2"></p>
+    </div>
+  </div>
+</header>
+<div class="rule"></div>
+
+<nav class="tabs">
+  <div class="tabs-inner" role="tablist">
+    <button class="tab" role="tab" data-tab="painel" aria-selected="true">Painel</button>
+    <button class="tab" role="tab" data-tab="alunos" aria-selected="false">Alunos</button>
+    <button class="tab" role="tab" data-tab="encontros" aria-selected="false">Encontros</button>
+    <button class="tab" role="tab" data-tab="contatos" aria-selected="false">Contatos</button>
+    <button class="tab" role="tab" data-tab="dados" aria-selected="false">Dados</button>
+  </div>
+</nav>
+
+<main>
+  <!-- PAINEL -->
+  <section id="painel">
+    <h2>Painel da turma</h2>
+    <p class="sub">Toque em qualquer número ou cor para ver a lista de alunos naquela situação.</p>
+    <div id="alertas"></div>
+    <div id="kpis" class="kpis"></div>
+    <div id="semaforo"></div>
+    <div class="board">
+      <div class="board-head">
+        <div>
+          <h3>Quem precisa de atenção</h3>
+          <span class="hint">Quem soma mais sinais aparece primeiro. Toque no aluno para abrir a ficha.</span>
+        </div>
+        <span id="triagemInfo" class="count-pill"></span>
+      </div>
+      <div id="triagem"></div>
+    </div>
+  </section>
+
+  <!-- ALUNOS -->
+  <section id="alunos" hidden>
+    <h2>Alunos da turma</h2>
+    <p class="sub">Toque em um aluno para abrir a ficha. Toque no título de uma coluna para ordenar.</p>
+    <div id="chipsSinal" class="chips" role="group" aria-label="Filtrar por sinal"></div>
+    <div class="tools">
+      <input type="search" id="busca" placeholder="Buscar por nome, e-mail, telefone ou cidade" aria-label="Buscar aluno">
+      <select id="filtroCond" aria-label="Filtrar por condição"><option value="">Todas as condições</option></select>
+      <select id="filtroStatus" aria-label="Filtrar por situação">
+        <option value="">Todas as situações</option>
+        <option value="ativo">Ativo</option>
+        <option value="atencao">Em observação</option>
+        <option value="risco">Em risco</option>
+        <option value="desistente">Desistente</option>
+      </select>
+    </div>
+    <div id="filtroAtivo"></div>
+    <div id="tabelaAlunos"></div>
+  </section>
+
+  <!-- ENCONTROS -->
+  <section id="encontros" hidden>
+    <h2>Encontros</h2>
+    <p class="sub">Faça a chamada do encontro da semana. As faltas entram no painel na mesma hora.</p>
+    <div class="tools">
+      <input type="date" id="novaData" class="fld" style="width:auto" aria-label="Data do novo encontro">
+      <input type="text" id="novoTema" class="fld" style="width:auto;min-width:220px" placeholder="Tema ou lição (opcional)" aria-label="Tema do novo encontro">
+      <button class="btn gold" id="btnNovoEncontro">Criar encontro</button>
+      <label style="font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;margin-left:auto">
+        <input type="checkbox" id="verDesistentes"> mostrar desistentes
+      </label>
+    </div>
+    <div id="chamada"></div>
+    <div class="tools"><h3 class="secao">Histórico de presença</h3></div>
+    <div id="listaEncontros"></div>
+  </section>
+
+  <!-- CONTATOS -->
+  <section id="contatos" hidden>
+    <h2>Registro de contatos</h2>
+    <p class="sub">Tudo o que vocês registram nas fichas aparece aqui, agrupado por dia. Toque em um contato para abrir a ficha do aluno.</p>
+    <div id="statsContatos" class="stats"></div>
+    <div class="tools">
+      <input type="search" id="buscaContato" placeholder="Buscar aluno ou observação" aria-label="Buscar contato">
+      <select id="filtroCanal" aria-label="Filtrar por canal"><option value="">Todos os canais</option></select>
+      <select id="filtroResultado" aria-label="Filtrar por resultado"><option value="">Todos os resultados</option></select>
+      <button class="btn ghost sm" id="btnCsvContatos">Baixar em CSV</button>
+    </div>
+    <div id="listaContatos"></div>
+  </section>
+
+  <!-- DADOS -->
+  <section id="dados" hidden>
+    <h2>Importar e guardar</h2>
+    <p class="sub">Duas vezes por semana, exporte a lista do Portal e solte o arquivo aqui.</p>
+
+    <div class="drop" id="drop">
+      <h3>Solte aqui o arquivo do Portal</h3>
+      <p>Aceita o <em>Export Student List</em> em .xlsx ou .csv. Os contatos, presenças e status já registrados são preservados.</p>
+      <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+      <button class="btn gold" id="btnEscolher">Escolher arquivo</button>
+    </div>
+
+    <div class="note" style="margin-top:18px">
+      Tudo é salvo sozinho, a cada clique. Você nunca precisa baixar nada para não perder os dados — o aviso no topo da tela mostra a hora do último salvamento. O app ainda guarda cópias automáticas dos últimos dias, e a cópia em arquivo abaixo serve só para levar os dados para outro computador.
+    </div>
+
+    <div class="board" style="margin-bottom:12px">
+      <div class="board-head"><h3>Cópias automáticas</h3></div>
+      <div id="listaSnaps"></div>
+    </div>
+
+    <div class="cols">
+      <div class="board">
+        <div class="board-head"><h3>Cópia de segurança</h3></div>
+        <div style="padding:14px 16px">
+          <div class="stack">
+            <button class="btn ghost" id="btnBackup">Baixar cópia (.json)</button>
+            <input type="file" id="fileRestore" accept=".json" hidden>
+            <button class="btn ghost" id="btnRestaurar">Restaurar de uma cópia</button>
+            <button class="btn ghost" id="btnCsvAlunos">Baixar situação dos alunos (.csv)</button>
+          </div>
+        </div>
+      </div>
+      <div class="board">
+        <div class="board-head"><h3>Ajustes</h3></div>
+        <div style="padding:14px 16px">
+          <div class="stack">
+            <label>Sinal amarelo a partir de
+              <input type="number" min="1" max="60" id="cfgCanvas" class="fld" style="width:80px;margin-left:6px"> dias sem Canvas
+            </label>
+            <label>Sinal vermelho a partir de
+              <input type="number" min="1" max="90" id="cfgCritico" class="fld" style="width:80px;margin-left:6px"> dias sem Canvas
+            </label>
+            <label>Alerta de contato a partir de
+              <input type="number" min="1" max="90" id="cfgContato" class="fld" style="width:80px;margin-left:6px"> dias sem falar
+            </label>
+            <label>Aluno conta como novo por
+              <input type="number" min="1" max="60" id="cfgNovo" class="fld" style="width:80px;margin-left:6px"> dias após entrar na lista
+            </label>
+            <button class="btn ghost" id="btnLimpar" style="color:var(--alert);border-color:#E5C6C2">Apagar todos os dados</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="board" style="margin-top:18px">
+      <div class="board-head"><h3>Importações feitas</h3></div>
+      <div id="listaImports"></div>
+    </div>
+  </section>
+</main>
+
+<div id="modal"></div>
+<script>
+/* ============================================================
+   Estado
+   ============================================================ */
+/* Aberto direto do computador (sem o armazenamento do Claude), usa o localStorage do navegador */
+if(!window.storage){
+  window.storage = {
+    async get(k){ const v = localStorage.getItem(k); return v == null ? null : {key:k, value:v}; },
+    async set(k, v){ localStorage.setItem(k, v); return {key:k, value:v}; }
+  };
+}
+const KEY  = 'pc102_v1';
+const SNAP = 'pc102_v1_copias';
+const MOTIVO_DIA = 'cópia do dia';
+const CANAIS = ['WhatsApp','Ligação','E-mail','Presencial','Mensagem no Canvas','Outro'];
+let db = novoBanco();
+let salvando = null;
+
+function novoBanco(){
+  return { versao:1, turma:'', alunos:{}, encontros:[], importacoes:[],
+           cfg:{ canvas:7, contato:7, canvasCritico:10, novoDias:14 } };
+}
+
+async function carregar(){
+  try{
+    const r = await window.storage.get(KEY);
+    if(r && r.value) db = Object.assign(novoBanco(), JSON.parse(r.value));
+  }catch(e){ /* primeira vez: chave ainda não existe */ }
+  if(!db.cfg) db.cfg = { canvas:7, contato:7 };
+}
+function salvar(){
+  clearTimeout(salvando);
+  marcaSalvamento('salvando…');
+  salvando = setTimeout(async ()=>{
+    try{
+      await window.storage.set(KEY, JSON.stringify(db));
+      const agora = new Date();
+      marcaSalvamento('salvo automaticamente às ' + agora.toTimeString().slice(0,5));
+      copiaDoDia();
+    }catch(e){
+      marcaSalvamento('não consegui salvar — baixe uma cópia na aba Dados');
+      aviso('Não consegui salvar agora. Baixe uma cópia na aba Dados.');
+    }
+  }, 300);
+}
+function marcaSalvamento(txt){
+  const el = document.getElementById('saveInfo');
+  if(el) el.textContent = txt;
+}
+
+/* Cópias automáticas: uma por dia e uma antes de cada importação */
+async function lerCopias(){
+  try{ const r = await window.storage.get(SNAP); return r && r.value ? JSON.parse(r.value) : []; }
+  catch(e){ return []; }
+}
+async function guardarCopia(motivo, forcar){
+  try{
+    const copias = await lerCopias();
+    const agora = Date.now(), hoje = hojeISO();
+    const item = { em:hoje, hora:new Date().toTimeString().slice(0,5), ts:agora, motivo,
+                   alunos:Object.keys(db.alunos).length, dados:JSON.stringify(db) };
+    if(forcar){
+      copias.unshift(item);
+    }else{
+      // a cópia do dia acompanha o trabalho: é refeita a cada 5 minutos de uso,
+      // então cada dia anterior guarda como as coisas ficaram no fim daquele dia
+      const i = copias.findIndex(c => c.em === hoje && c.motivo === MOTIVO_DIA);
+      if(i >= 0){
+        if(agora - (copias[i].ts||0) < 5*60*1000) return;
+        copias[i] = item;
+      }else copias.unshift(item);
+    }
+    copias.sort((a,b)=> (b.ts||0) - (a.ts||0));
+    await window.storage.set(SNAP, JSON.stringify(copias.slice(0,6)));
+    telaSnaps();
+  }catch(e){ /* a cópia é um extra: nunca atrapalha o uso */ }
+}
+function copiaDoDia(){ guardarCopia(MOTIVO_DIA, false); }
+
+async function telaSnaps(){
+  const el = document.getElementById('listaSnaps'); if(!el) return;
+  const copias = await lerCopias();
+  el.innerHTML = copias.length ? copias.map((c,i)=>`
+      <div class="snap">
+        <div><b>${dataBR(c.em)} às ${esc(c.hora)}</b><small>${esc(c.motivo)} · ${c.alunos} alunos</small></div>
+        <button class="btn sm ghost" data-snap="${i}">Voltar para esta</button>
+      </div>`).join('')
+    : `<div class="empty">Assim que você importar a lista, o app começa a guardar cópias sozinho.</div>`;
+}
+
+/* ============================================================
+   Utilidades
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function hojeISO(){
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+}
+function dias(iso){
+  if(!iso) return null;
+  const a = new Date(iso+'T00:00:00'), b = new Date(hojeISO()+'T00:00:00');
+  return Math.max(0, Math.round((b-a)/86400000));
+}
+function dataBR(iso){
+  if(!iso) return '—';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+function normalizaData(v){
+  if(v == null || v === '') return null;
+  if(v instanceof Date && !isNaN(v))
+    return new Date(v.getTime() - v.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  if(typeof v === 'number'){                    // número de série do Excel
+    const ms = Math.round((v - 25569) * 86400000);
+    return new Date(ms).toISOString().slice(0,10);
+  }
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);            if(m) return `${m[1]}-${m[2]}-${m[3]}`;
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);          // formato americano do Portal
+  if(m) return `${m[3]}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`;
+  const d = new Date(s);
+  return isNaN(d) ? null : d.toISOString().slice(0,10);
+}
+function aviso(txt){
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = txt;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3200);
+}
+function baixar(nome, conteudo, tipo){
+  const url = URL.createObjectURL(new Blob([conteudo], {type:tipo}));
+  const a = document.createElement('a');
+  a.href = url; a.download = nome; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+function csvLinha(arr){
+  return arr.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',');
+}
+function uid(){ return Math.random().toString(36).slice(2,10); }
+
+/* ============================================================
+   Regras dos indicadores
+   ============================================================ */
+const STATUS = {
+  ativo:      {rot:'Ativo',         cls:'grn'},
+  atencao:    {rot:'Em observação', cls:'yel'},
+  risco:      {rot:'Em risco',      cls:'red'},
+  desistente: {rot:'Desistente',    cls:'gry'}
+};
+
+function encontrosOrdenados(){
+  return db.encontros.slice().sort((a,b)=> a.data < b.data ? 1 : -1);  // recente primeiro
+}
+function faltasSeguidas(id){
+  let n = 0;
+  for(const e of encontrosOrdenados()){
+    const p = e.presencas[id];
+    if(p === 'F') n++;
+    else if(p === 'P' || p === 'J') break;
+    else break;                       // ainda não marcado: para a contagem
+  }
+  return n;
+}
+function faltasTotais(id){
+  return db.encontros.filter(e => e.presencas[id] === 'F').length;
+}
+function ultimoContato(id){
+  const c = db.alunos[id].contatos;
+  if(!c || !c.length) return null;
+  return c.slice().sort((a,b)=> a.data < b.data ? 1 : -1)[0].data;
+}
+function analise(a){
+  const semCanvas  = dias(a.ultimoAcesso);
+  const semContato = dias(ultimoContato(a.id));
+  const seguidas   = faltasSeguidas(a.id);
+  let risco = 0;
+  if(semCanvas != null){
+    if(semCanvas >= db.cfg.canvas) risco += 3;
+    else if(semCanvas >= Math.max(3, db.cfg.canvas - 3)) risco += 1;
+  }
+  if(seguidas >= 2) risco += 3; else if(seguidas === 1) risco += 1;
+  if(semContato == null && (semCanvas >= db.cfg.canvas || seguidas >= 1)) risco += 2;
+  else if(semContato != null && semContato >= db.cfg.contato) risco += 1;
+  if(a.status === 'risco') risco += 2;
+  if(a.saiuDoExport) risco += 3;
+  return {semCanvas, semContato, seguidas, risco};
+}
+
+/* ---------- Sinal da turma (semáforo) ----------
+   Vermelho: mais de 2 faltas no bloco OU sem Canvas há cfg.canvasCritico dias (padrão 10)
+   Amarelo:  sem Canvas há cfg.canvas dias (padrão 7) OU faltou ao último encontro
+   Verde:    nenhum dos alertas acima                                                   */
+const FALTAS_VERMELHO = 3;
+const SINAL = { red:'Vermelho', yel:'Amarelo', grn:'Verde', gry:'Desistente' };
+const ORDEM_SINAL = { red:0, yel:1, grn:2, gry:3 };
+function canvasCritico(){ return db.cfg.canvasCritico || 10; }
+function semaforo(a, r){
+  if(a.status === 'desistente') return {cor:'gry', motivos:[]};
+  r = r || analise(a);
+  const tot = faltasTotais(a.id), red = [], yel = [];
+  if(tot >= FALTAS_VERMELHO) red.push(`${tot} faltas no bloco`);
+  if(r.semCanvas != null && r.semCanvas >= canvasCritico()) red.push(`${r.semCanvas} dias sem Canvas`);
+  else if(r.semCanvas != null && r.semCanvas >= db.cfg.canvas) yel.push(`${r.semCanvas} dias sem Canvas`);
+  if(r.seguidas >= 1 && tot < FALTAS_VERMELHO) yel.push('faltou ao último encontro');
+  if(red.length) return {cor:'red', motivos:red.concat(yel)};
+  if(yel.length) return {cor:'yel', motivos:yel};
+  return {cor:'grn', motivos:[]};
+}
+function pillSinal(s){
+  const dica = s.motivos.join(' · ') || (s.cor === 'gry' ? 'desistente' : 'nenhum alerta');
+  return `<span class="sinal ${s.cor}" title="${esc(dica)}">${SINAL[s.cor]}</span>`;
+}
+
+/* ---------- Condições usadas pelo painel e pelos filtros da aba Alunos ---------- */
+const ui = { cond:'', sinal:'', ordem:{col:'sinal', dir:1}, encSel:null };
+const naoDesistente = a => a.status !== 'desistente';
+function filtros(){
+  const c = db.cfg;
+  return {
+    semCanvas:      {rot:`Sem entrar no Canvas há ${c.canvas} dias ou mais`,        fn:(a,r)=> naoDesistente(a) && r.semCanvas != null && r.semCanvas >= c.canvas},
+    canvasCritico:  {rot:`Sem entrar no Canvas há ${canvasCritico()} dias ou mais`, fn:(a,r)=> naoDesistente(a) && r.semCanvas != null && r.semCanvas >= canvasCritico()},
+    semRegistro:    {rot:'Sem registro de acesso ao Canvas',                        fn:(a,r)=> naoDesistente(a) && r.semCanvas == null},
+    canvasRecente:  {rot:'Acessaram o Canvas nos últimos 3 dias',                   fn:(a,r)=> naoDesistente(a) && r.semCanvas != null && r.semCanvas <= 3},
+    faltouUltimo:   {rot:'Faltaram ao último encontro',                             fn:(a,r)=> naoDesistente(a) && r.seguidas >= 1},
+    muitasFaltas:   {rot:`Com ${FALTAS_VERMELHO} faltas ou mais`,                   fn:a    => naoDesistente(a) && faltasTotais(a.id) >= FALTAS_VERMELHO},
+    semContato:     {rot:`Sem contato há ${c.contato} dias ou mais`,                fn:(a,r)=> naoDesistente(a) && (r.semContato == null || r.semContato >= c.contato)},
+    nuncaContatado: {rot:'Nunca contatados',                                        fn:(a,r)=> naoDesistente(a) && r.semContato == null},
+    foraDaLista:    {rot:'Fora da lista do Portal',                                 fn:a    => !!a.saiuDoExport},
+    novos:          {rot:`Novos na turma (entraram há até ${c.novoDias || 14} dias)`, fn:a   => naoDesistente(a) && ehNovo(a)},
+    ativos:         {rot:'Alunos ativos (sem desistentes)',                         fn:naoDesistente},
+  };
+}
+function fone(t){
+  const d = String(t||'').replace(/\D/g,'');
+  const m = d.match(/^55(\d{2})(\d{4,5})(\d{4})$/);
+  return m ? `(${m[1]}) ${m[2]}-${m[3]}` : String(t||'');
+}
+function linkWa(a){
+  const d = String(a.telefone||'').replace(/\D/g,'');
+  return d ? `<a class="btn sm wa" href="https://wa.me/${d}" target="_blank" rel="noopener" title="Abrir conversa com ${esc(a.nome)} no WhatsApp">WhatsApp</a>` : '';
+}
+const ROT_PRES = { P:'presente', F:'faltou', J:'justificou', '':'não marcado' };
+const RESULTADOS = { 'Falou com o aluno':'grn', 'Prometeu voltar':'blu', 'Deixou recado':'yel', 'Não atendeu':'gry', 'Vai sair do curso':'red' };
+function encontrosAsc(){ return db.encontros.slice().sort((a,b)=> a.data < b.data ? -1 : 1); }
+function haQuanto(iso){ const d = dias(iso); return d == null ? '' : d === 0 ? 'hoje' : d === 1 ? 'ontem' : `há ${d} dias`; }
+function rotuloDia(iso){
+  const s = new Date(iso+'T00:00:00').toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'});
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/* Aluno novo: entrou na lista depois da primeira importação, há até cfg.novoDias dias.
+   Quem veio na primeira importação é a turma original, não conta como novo. */
+function primeiraImportacao(){
+  const datas = db.importacoes.map(i => i.em)
+    .concat(Object.values(db.alunos).map(a => a.entrouEm)).filter(Boolean).sort();
+  return datas[0] || null;
+}
+function ehNovo(a, inicio = primeiraImportacao()){
+  // chegouDepois é gravado na importação; cópias antigas (sem o campo) caem na comparação de datas
+  const depois = a.chegouDepois !== undefined ? a.chegouDepois
+                                              : !!inicio && !!a.entrouEm && a.entrouEm > inicio;
+  if(!depois || !a.entrouEm) return false;
+  const d = dias(a.entrouEm);
+  return d != null && d <= (db.cfg.novoDias || 14);
+}
+
+function irPara(tab){
+  $$('.tab').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === tab));
+  ['painel','alunos','encontros','contatos','dados'].forEach(s => $('#'+s).hidden = (s !== tab));
+  render();                     // toda aba abre com os números do momento (chamada, contatos, status)
+  window.scrollTo(0, 0);
+}
+function verAlunos(cond, sinal){
+  ui.cond = cond || ''; ui.sinal = sinal || ''; ui.ordem = {col:'sinal', dir:1};
+  $('#busca').value = ''; $('#filtroStatus').value = '';
+  tabelaAlunos(); irPara('alunos');
+}
+function limparFiltros(){
+  ui.cond = ''; ui.sinal = '';
+  $('#busca').value = ''; $('#filtroStatus').value = '';
+  tabelaAlunos();
+}
+function listaAlunos(){
+  return Object.values(db.alunos).sort((a,b)=> a.nome.localeCompare(b.nome,'pt-BR'));
+}
+
+/* ============================================================
+   Importação da planilha do Portal
+   ============================================================ */
+const MAPA = [
+  ['nome',        ['full name','nome completo','nome']],
+  ['matricula',   ['student number','matrícula','matricula']],
+  ['turma',       ['gathering','encontro']],
+  ['genero',      ['gender','gênero','genero']],
+  ['email',       ['email (contact)','email address 1','e-mail']],
+  ['email2',      ['email address 2','e-mail 2']],
+  ['telefone',    ['mobile phone','telefone','celular']],
+  ['idade',       ['age','idade']],
+  ['ultimoAcesso',['last participation','última participação','ultima participacao']],
+  ['cidade',      ['city','cidade']],
+  ['pais',        ['country','país','pais']],
+  ['membro',      ['is member','membro']]
+];
+function acharCampo(linha, alvos){
+  const chaves = Object.keys(linha);
+  for(const alvo of alvos){
+    const k = chaves.find(k => k.toLowerCase().includes(alvo));
+    if(k) return linha[k];
+  }
+  return '';
+}
+
+async function importar(file){
+  if(Object.keys(db.alunos).length) await guardarCopia('antes de importar a lista', true);
+  const buf = await file.arrayBuffer();
+  const wb  = XLSX.read(buf, {type:'array', cellDates:true});
+  const ws  = wb.Sheets[wb.SheetNames[0]];
+  const linhas = XLSX.utils.sheet_to_json(ws, {defval:''});
+  if(!linhas.length){ aviso('O arquivo não tem linhas de alunos.'); return; }
+
+  const data = hojeISO();
+  let novos = 0, atualizados = 0;
+  const turmaJaExistia = Object.keys(db.alunos).length > 0;   // na primeira importação ninguém é "novo"
+  const vistos = new Set();
+
+  for(const l of linhas){
+    const reg = {};
+    for(const [campo, alvos] of MAPA) reg[campo] = acharCampo(l, alvos);
+    reg.nome = String(reg.nome||'').trim();
+    if(!reg.nome) continue;
+    const id = String(reg.matricula||'').trim() || reg.nome.toLowerCase();
+    vistos.add(id);
+    const acesso = normalizaData(reg.ultimoAcesso);
+
+    if(!db.alunos[id]){
+      db.alunos[id] = {
+        id, nome:reg.nome, matricula:String(reg.matricula||'').trim(),
+        email:reg.email, email2:reg.email2, telefone:String(reg.telefone||''),
+        idade:reg.idade, genero:reg.genero, cidade:reg.cidade, pais:reg.pais,
+        membro:reg.membro, turma:reg.turma,
+        ultimoAcesso:acesso, historico:[], status:'ativo', notas:'',
+        contatos:[], saiuDoExport:false, entrouEm:data, chegouDepois:turmaJaExistia
+      };
+      novos++;
+    }else{
+      const a = db.alunos[id];
+      Object.assign(a, {
+        nome:reg.nome, email:reg.email||a.email, email2:reg.email2||a.email2,
+        telefone:String(reg.telefone||a.telefone), cidade:reg.cidade||a.cidade,
+        idade:reg.idade||a.idade, turma:reg.turma||a.turma, saiuDoExport:false
+      });
+      if(acesso) a.ultimoAcesso = acesso;
+      atualizados++;
+    }
+    const a = db.alunos[id];
+    if(acesso && !a.historico.some(h => h.em === data)) a.historico.push({em:data, acesso});
+    if(reg.turma) db.turma = String(reg.turma);
+  }
+
+  let sumiram = 0;
+  for(const a of Object.values(db.alunos)){
+    if(!vistos.has(a.id) && !a.saiuDoExport){ a.saiuDoExport = true; a.saiuEm = data; sumiram++; }
+  }
+
+  db.importacoes.unshift({em:data, total:vistos.size, novos, atualizados, sumiram});
+  db.importacoes = db.importacoes.slice(0, 30);
+  salvar(); render();
+  aviso(`Lista atualizada: ${vistos.size} alunos, ${novos} novos${sumiram ? `, ${sumiram} fora da lista` : ''}.`);
+}
+
+/* ============================================================
+   Telas
+   ============================================================ */
+function render(){
+  db.cfg = Object.assign({ canvas:7, contato:7, canvasCritico:10, novoDias:14 }, db.cfg);   // cópias antigas não têm todos os ajustes
+  cabecalho(); painel(); tabelaAlunos(); telaEncontros(); telaContatos(); telaDados(); telaSnaps();
+}
+
+function cabecalho(){
+  const total = Object.keys(db.alunos).length;
+  const ult = db.importacoes[0];
+  $('#turmaSub').textContent = total
+    ? `${total} alunos · última importação em ${ult ? dataBR(ult.em) : '—'}`
+    : 'Nenhuma lista importada ainda';
+  if(db.turma){
+    const m = db.turma.match(/Block\s*\d+/i);
+    $('#turmaNome').textContent = `PC 102 — ${m ? m[0] : 'Acompanhamento de alunos'}`;
+  }
+}
+
+function painel(){
+  const todos = listaAlunos();
+  const F = filtros();
+  const com = todos.map(a => { const r = analise(a); return {a, r, s:semaforo(a, r)}; });
+  const conta = k => com.filter(x => F[k].fn(x.a, x.r)).length;
+  const vazio = !todos.length;
+  const kpi = (k, cls, rotulo) => `
+    <button class="kpi ${cls}" data-cond="${k}" ${vazio ? 'disabled' : ''}>
+      <span class="n">${conta(k)}</span><span class="l">${rotulo}</span><span class="go">Ver alunos →</span>
+    </button>`;
+  const inicio = primeiraImportacao();
+  const novos = todos.filter(a => naoDesistente(a) && ehNovo(a, inicio))
+                     .sort((x,y)=> x.entrouEm < y.entrouEm ? 1 : -1);
+  $('#alertas').innerHTML = novos.length ? `
+    <button class="alerta" data-cond="novos">
+      <span class="badge">NOVO</span>
+      <span class="txt">
+        <strong>${novos.length === 1 ? '1 aluno novo entrou na turma' : `${novos.length} alunos novos entraram na turma`}</strong>
+        ${novos.slice(0, 3).map(a => `${esc(a.nome)} (desde ${dataBR(a.entrouEm)})`).join(', ')}${novos.length > 3 ? ` e mais ${novos.length - 3}` : ''}.
+        Dê as boas-vindas e confira se já acessou o Canvas.
+      </span>
+      <span class="go">Ver ${novos.length === 1 ? 'aluno' : 'alunos'} →</span>
+    </button>` : '';
+
+  $('#kpis').innerHTML =
+      kpi('semCanvas', 'hot', `sem entrar no Canvas há ${db.cfg.canvas} dias ou mais`)
+    + kpi('faltouUltimo', 'warm', 'faltaram ao último encontro')
+    + kpi('ativos', 'cool', `alunos ativos de ${todos.length}`)
+    + kpi('semContato', '', `sem contato registrado há ${db.cfg.contato} dias ou mais`);
+
+  const n = {red:0, yel:0, grn:0};
+  com.forEach(x => { if(x.s.cor in n) n[x.s.cor]++; });
+  const tot = n.red + n.yel + n.grn;
+  $('.tab[data-tab="painel"]').innerHTML = 'Painel'
+    + (n.red ? `<span class="pill" title="${n.red} alunos no vermelho">${n.red}</span>` : '');
+  $('#semaforo').innerHTML = vazio ? '' : `
+    <div class="semaf">
+      <div class="semaf-head">
+        <h3>Sinal da turma</h3>
+        <small>${tot} alunos ativos · toque em uma cor para ver quem está nela</small>
+      </div>
+      <div class="semaf-bar" role="img" aria-label="${n.red} no vermelho, ${n.yel} no amarelo, ${n.grn} no verde">
+        ${['red','yel','grn'].map(c => n[c] ? `<i class="${c}" style="flex:${n[c]}"></i>` : '').join('')}
+      </div>
+      <div class="semaf-btns">
+        ${btnSinal('red', n.red, `mais de 2 faltas ou ${canvasCritico()}+ dias sem Canvas`)}
+        ${btnSinal('yel', n.yel, `${db.cfg.canvas}+ dias sem Canvas ou faltou ao último encontro`)}
+        ${btnSinal('grn', n.grn, 'nenhum dos alertas acima')}
+      </div>
+    </div>`;
+
+  const fila = com.filter(x => naoDesistente(x.a) && x.r.risco > 0)
+                  .sort((x,y)=> (y.r.risco - x.r.risco)
+                             || ((y.r.semCanvas ?? -1) - (x.r.semCanvas ?? -1))
+                             || (y.r.seguidas - x.r.seguidas)
+                             || ((y.r.semContato ?? -1) - (x.r.semContato ?? -1)));
+
+  $('#triagemInfo').textContent = vazio ? '' : fila.length ? `${fila.length} ${fila.length === 1 ? 'aluno' : 'alunos'}` : 'ninguém pendente';
+
+  if(vazio){
+    $('#triagem').innerHTML = `<div class="empty">Comece pela aba <b>Dados</b> e importe a lista do Portal.</div>`;
+    return;
+  }
+  if(!fila.length){
+    $('#triagem').innerHTML = `<div class="empty">Ninguém em alerta hoje. Toda a turma acessou o Canvas e esteve no último encontro.</div>`;
+    return;
+  }
+  $('#triagem').innerHTML = fila.map(({a, r, s}) => `
+    <div class="row sig-${s.cor}" data-id="${esc(a.id)}" tabindex="0">
+      ${pillSinal(s)}
+      <div class="who">
+        <b>${esc(a.nome)}</b>
+        <small>${esc(a.cidade || '')}${a.telefone ? ' · ' + esc(fone(a.telefone)) : ''}</small>
+      </div>
+      <div class="flags">${etiquetas(a, r)}</div>
+      <div class="acts">${linkWa(a)}<button class="btn sm ghost">Abrir ficha</button></div>
+    </div>`).join('');
+}
+function btnSinal(cor, qtd, desc){
+  return `<button class="semaf-btn" data-sinal="${cor}">
+      <span class="dotc ${cor}"></span><b>${qtd}</b>
+      <span class="d"><strong>${SINAL[cor]}</strong>${desc}</span>
+    </button>`;
+}
+
+function etiquetas(a, r){
+  const t = [], tot = faltasTotais(a.id);
+  if(ehNovo(a)) t.push(`<span class="flag blu">novo na turma</span>`);
+  if(a.saiuDoExport) t.push(`<span class="flag red">fora da lista do Portal</span>`);
+  if(r.semCanvas == null) t.push(`<span class="flag gry">sem registro no Canvas</span>`);
+  else if(r.semCanvas >= canvasCritico()) t.push(`<span class="flag red">${r.semCanvas} dias sem Canvas</span>`);
+  else if(r.semCanvas >= db.cfg.canvas) t.push(`<span class="flag yel">${r.semCanvas} dias sem Canvas</span>`);
+  else if(r.semCanvas >= Math.max(3, db.cfg.canvas-3)) t.push(`<span class="flag gry">${r.semCanvas} dias sem Canvas</span>`);
+  const corFaltas = tot >= FALTAS_VERMELHO ? 'red' : 'yel';
+  if(r.seguidas >= 2) t.push(`<span class="flag ${corFaltas}">${r.seguidas} faltas seguidas</span>`);
+  else if(r.seguidas === 1) t.push(`<span class="flag ${corFaltas}">faltou ao último encontro</span>`);
+  if(tot >= FALTAS_VERMELHO && tot > r.seguidas) t.push(`<span class="flag red">${tot} faltas no bloco</span>`);
+  if(r.semContato == null) t.push(`<span class="flag gry">nunca contatado</span>`);
+  else if(r.semContato >= db.cfg.contato) t.push(`<span class="flag yel">${r.semContato} dias sem contato</span>`);
+  return t.join('');
+}
+
+function tabelaAlunos(){
+  const F = filtros();
+  const sel = $('#filtroCond');
+  sel.innerHTML = `<option value="">Todas as condições</option>`
+    + Object.entries(F).map(([k,v]) => `<option value="${k}">${esc(v.rot)}</option>`).join('');
+  sel.value = ui.cond;
+
+  const q  = ($('#busca').value||'').toLowerCase().trim();
+  const fs = $('#filtroStatus').value;
+  const todos = listaAlunos().map(a => { const r = analise(a); return {a, r, s:semaforo(a, r), tot:faltasTotais(a.id)}; });
+
+  const cnt = c => todos.filter(x => x.s.cor === c).length;
+  $('#chipsSinal').innerHTML = [['', 'Todos', todos.length], ['red', 'Vermelho', cnt('red')], ['yel', 'Amarelo', cnt('yel')],
+                                ['grn', 'Verde', cnt('grn')], ['gry', 'Desistentes', cnt('gry')]]
+    .map(([k, rot, n]) => `<button class="chipf" data-chip="${k}" aria-pressed="${ui.sinal === k}">
+        ${k ? `<span class="dotc ${k}"></span>` : ''}${rot} <span class="c">${n}</span></button>`).join('');
+
+  if(!todos.length){
+    $('#filtroAtivo').innerHTML = '';
+    $('#tabelaAlunos').innerHTML = `<div class="empty">Importe a lista do Portal na aba <b>Dados</b> para começar.</div>`;
+    return;
+  }
+
+  let arr = todos;
+  if(q)  arr = arr.filter(({a}) => [a.nome, a.email, a.email2, a.telefone, a.cidade, a.matricula].join(' ').toLowerCase().includes(q));
+  if(fs) arr = arr.filter(({a}) => a.status === fs);
+  if(ui.cond && F[ui.cond]) arr = arr.filter(x => F[ui.cond].fn(x.a, x.r));
+  if(ui.sinal) arr = arr.filter(x => x.s.cor === ui.sinal);
+
+  const partes = [];
+  if(ui.cond && F[ui.cond]) partes.push(F[ui.cond].rot);
+  if(ui.sinal) partes.push(`sinal ${SINAL[ui.sinal].toLowerCase()}`);
+  if(fs) partes.push(`situação: ${STATUS[fs].rot.toLowerCase()}`);
+  if(q) partes.push(`busca “${q}”`);
+  $('#filtroAtivo').innerHTML = partes.length
+    ? `<div class="filtro-ativo"><span>Mostrando <b>${arr.length}</b> de ${todos.length} alunos · ${esc(partes.join(' · '))}</span>
+         <button class="link" id="limparFiltros">Limpar filtros</button></div>`
+    : `<p class="count">${todos.length} alunos na turma</p>`;
+
+  if(!arr.length){ $('#tabelaAlunos').innerHTML = `<div class="empty">Nenhum aluno nessa situação. Ótima notícia.</div>`; return; }
+
+  const {col, dir} = ui.ordem;
+  const cmp = {
+    nome:    (x,y)=> x.a.nome.localeCompare(y.a.nome, 'pt-BR'),
+    sinal:   (x,y)=> (ORDEM_SINAL[x.s.cor] - ORDEM_SINAL[y.s.cor]) || (y.r.risco - x.r.risco),
+    canvas:  (x,y)=> (y.r.semCanvas ?? -1) - (x.r.semCanvas ?? -1),
+    faltas:  (x,y)=> (y.tot - x.tot) || (y.r.seguidas - x.r.seguidas),
+    contato: (x,y)=> (y.r.semContato ?? 9999) - (x.r.semContato ?? 9999),
+  }[col];
+  arr = arr.slice().sort((x,y)=> (cmp(x,y) * dir) || x.a.nome.localeCompare(y.a.nome, 'pt-BR'));
+
+  const th = (k, rot, cls = '') => {
+    const ativo = col === k;
+    const crescente = (k === 'nome') === (dir === 1);
+    return `<th class="sort ${cls}" data-sort="${k}" aria-sort="${ativo ? (crescente ? 'ascending' : 'descending') : 'none'}">${rot}${ativo ? ` <span class="arr">${dir === 1 ? '↓' : '↑'}</span>` : ''}</th>`;
+  };
+  const encs = encontrosAsc().slice(-6);
+
+  $('#tabelaAlunos').innerHTML = `<table><thead><tr>
+      ${th('nome', 'Aluno')}${th('sinal', 'Sinal')}${th('canvas', 'Canvas', 'num')}
+      <th class="hide-sm">Últimos encontros</th>${th('faltas', 'Faltas', 'num hide-sm')}
+      ${th('contato', 'Último contato', 'num hide-sm')}<th class="hide-sm">Situação</th><th class="hide-sm"></th>
+    </tr></thead><tbody>
+    ${arr.map(({a, r, s, tot}) => {
+      const st = STATUS[a.status] || STATUS.ativo;
+      const cor = r.semCanvas == null ? '' : r.semCanvas >= canvasCritico() ? 'color:var(--alert);font-weight:600'
+                : r.semCanvas >= db.cfg.canvas ? 'color:var(--gold-ink);font-weight:600' : '';
+      return `<tr class="sig-${s.cor}" data-id="${esc(a.id)}" tabindex="0">
+        <td class="name-cell"><b>${esc(a.nome)}</b><small>${esc(a.cidade||'')}${a.idade ? ' · ' + esc(a.idade) + ' anos' : ''}${a.saiuDoExport ? ' · <span style="color:var(--alert)">fora da lista do Portal</span>' : ''}${ehNovo(a) ? ' · <span style="color:var(--navy);font-weight:600">novo na turma</span>' : ''}</small></td>
+        <td>${pillSinal(s)}${s.motivos.length ? `<small class="why">${esc(s.motivos.join(' · '))}</small>` : ''}</td>
+        <td class="num" style="${cor}">${r.semCanvas == null ? '<span class="muted">sem registro</span>' : r.semCanvas + ' dias'}</td>
+        <td class="hide-sm"><span class="att">${encs.map(e => { const v = e.presencas[a.id] || '';
+            return `<i class="${v}" title="${dataBR(e.data)}: ${ROT_PRES[v]}">${v || '·'}</i>`; }).join('')}</span></td>
+        <td class="num hide-sm">${tot || '—'}</td>
+        <td class="num hide-sm">${r.semContato == null ? '<span class="muted">nunca</span>' : haQuanto(ultimoContato(a.id))}</td>
+        <td class="hide-sm"><span class="flag ${st.cls}">${st.rot}</span></td>
+        <td class="hide-sm">${linkWa(a)}</td>
+      </tr>`;}).join('')}
+    </tbody></table>`;
+}
+
+function telaEncontros(){
+  const encs = encontrosAsc();
+  const verDes = $('#verDesistentes').checked;
+  const alunos = listaAlunos().filter(a => verDes || a.status !== 'desistente');
+  if(!encs.length){
+    $('#chamada').innerHTML = `<div class="empty" style="margin-bottom:26px">Nenhum encontro criado. Escolha a data acima e crie o primeiro para fazer a chamada.</div>`;
+    $('#listaEncontros').innerHTML = '';
+    return;
+  }
+  if(!encs.some(e => e.id === ui.encSel)) ui.encSel = encs[encs.length - 1].id;
+  telaChamada(encs, alunos);
+
+  $('#listaEncontros').innerHTML = `
+    <div class="legenda">
+      <span><i class="chip P">P</i> presente</span>
+      <span><i class="chip F">F</i> faltou</span>
+      <span><i class="chip J">J</i> justificou</span>
+      <span><i class="chip">·</i> ainda não marcado</span>
+      <span style="margin-left:auto">toque na data para fazer a chamada daquele dia</span>
+    </div>
+    <div class="matriz-wrap">
+      <table class="matriz">
+        <thead><tr>
+          <th class="fix">Aluno · ${alunos.length}</th>
+          ${encs.map(e => {
+            const p = alunos.filter(a => e.presencas[a.id] === 'P').length;
+            const f = alunos.filter(a => e.presencas[a.id] === 'F').length;
+            return `<th class="col${e.id === ui.encSel ? ' sel' : ''}">
+              <button class="sel-enc" data-sel="${e.id}" title="Fazer a chamada de ${dataBR(e.data)}">
+                <span class="d">${e.data.slice(8)}/${e.data.slice(5,7)}</span>
+                ${e.tema ? `<span class="t">${esc(e.tema)}</span>` : ''}
+              </button>
+              <span class="cnt">${p}P · ${f}F</span>
+              <button class="mini del-enc" data-enc="${e.id}" title="Excluir este encontro" aria-label="Excluir o encontro de ${dataBR(e.data)}">×</button>
+            </th>`;}).join('')}
+          <th class="fim">Faltas</th>
+        </tr></thead>
+        <tbody>
+          ${alunos.map(a => {
+            const tot = faltasTotais(a.id), seg = faltasSeguidas(a.id), s = semaforo(a);
+            return `<tr class="${a.status === 'desistente' ? 'desist' : ''}">
+              <td class="fix nome"><span class="dotc ${s.cor}" style="margin-right:7px" title="Sinal ${SINAL[s.cor]}"></span>${esc(a.nome)}${a.status === 'desistente' ? '<small>desistente</small>' : seg >= 2 ? `<small style="color:var(--alert)">${seg} faltas seguidas</small>` : ''}</td>
+              ${encs.map(e => { const v = e.presencas[a.id] || '';
+                return `<td class="cel${e.id === ui.encSel ? ' sel' : ''}"><button class="mk ${v}" data-enc="${e.id}" data-al="${esc(a.id)}"
+                          title="${esc(a.nome)} · ${dataBR(e.data)}: ${ROT_PRES[v]}">${v || '·'}</button></td>`;}).join('')}
+              <td class="fim">${tot ? `<b>${tot}</b>` : '—'}</td>
+            </tr>`;}).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function telaChamada(encs, alunos){
+  const e = encs.find(x => x.id === ui.encSel);
+  const i = encs.indexOf(e);
+  const c = {P:0, F:0, J:0};
+  alunos.forEach(a => { const v = e.presencas[a.id]; if(v) c[v]++; });
+  const marcados = c.P + c.F + c.J;
+  const restantes = alunos.filter(a => a.status !== 'desistente' && !e.presencas[a.id]).length;
+
+  $('#chamada').innerHTML = `
+    <div class="chamada">
+      <div class="ch-head">
+        <div>
+          <div class="ch-nav">
+            <button class="btn sm ghost" data-navenc="-1" ${i === 0 ? 'disabled' : ''} aria-label="Encontro anterior">‹</button>
+            <h3>Chamada de ${dataBR(e.data)}</h3>
+            <button class="btn sm ghost" data-navenc="1" ${i === encs.length - 1 ? 'disabled' : ''} aria-label="Próximo encontro">›</button>
+            ${e.data === hojeISO() ? '<span class="flag yel">hoje</span>' : ''}
+          </div>
+          <p class="sub" style="margin:5px 0 0">${e.tema ? esc(e.tema) + ' · ' : ''}encontro ${i + 1} de ${encs.length}</p>
+        </div>
+        <div class="ch-stats">
+          <span class="p"><b>${c.P}</b>presentes</span>
+          <span class="f"><b>${c.F}</b>faltas</span>
+          <span class="j"><b>${c.J}</b>justificadas</span>
+          <span><b>${alunos.length - marcados}</b>sem marcar</span>
+        </div>
+      </div>
+      <div class="prog" title="${marcados} de ${alunos.length} marcados"><i style="width:${alunos.length ? marcados / alunos.length * 100 : 0}%"></i></div>
+      <div class="ch-tools">
+        <span>Toque em <b>P</b>, <b>F</b> ou <b>J</b>. Tocar de novo desmarca.</span>
+        <button class="btn sm gold" data-todos="${e.id}" ${restantes ? '' : 'disabled'}>${restantes ? `Marcar ${restantes} restantes como presentes` : 'Todos marcados'}</button>
+      </div>
+      <div class="ch-list">
+        ${alunos.map(a => { const v = e.presencas[a.id] || '', s = semaforo(a);
+          return `<div class="att-row">
+            <span class="dotc ${s.cor}" title="Sinal ${SINAL[s.cor]}"></span>
+            <b>${esc(a.nome)}${a.status === 'desistente' ? ' <small>desistente</small>' : ''}</b>
+            <div class="seg" role="group" aria-label="Presença de ${esc(a.nome)}">
+              ${['P','F','J'].map(k => `<button class="${k.toLowerCase()}" data-marca="${k}" data-enc="${e.id}" data-al="${esc(a.id)}"
+                  aria-pressed="${v === k}" title="${ROT_PRES[k]}">${k}</button>`).join('')}
+            </div>
+          </div>`;}).join('')}
+      </div>
+    </div>`;
+}
+
+function telaContatos(){
+  const sc = $('#filtroCanal'), sr = $('#filtroResultado');
+  if(sc.options.length === 1) CANAIS.forEach(c => sc.add(new Option(c, c)));
+  if(sr.options.length === 1) Object.keys(RESULTADOS).forEach(r => sr.add(new Option(r, r)));
+  const canal = sc.value, res = sr.value;
+  const q = ($('#buscaContato').value||'').toLowerCase().trim();
+
+  const todos = [];
+  for(const a of Object.values(db.alunos))
+    for(const c of (a.contatos||[])) todos.push({...c, a});
+
+  const recentes = todos.filter(c => dias(c.data) <= 7).length;
+  const conversas = todos.filter(c => c.resultado === 'Falou com o aluno' || c.resultado === 'Prometeu voltar').length;
+  const alcancados = new Set(todos.map(c => c.a.id)).size;
+  const F = filtros();
+  const semContato = listaAlunos().filter(a => F.semContato.fn(a, analise(a))).length;
+  $('#statsContatos').innerHTML = `
+    <div class="stat"><b>${todos.length}</b><span>contatos registrados</span></div>
+    <div class="stat"><b>${recentes}</b><span>nos últimos 7 dias</span></div>
+    <div class="stat"><b>${conversas}</b><span>conversas com o aluno · ${alcancados} alunos alcançados</span></div>
+    <button class="stat" data-cond="semContato" ${Object.keys(db.alunos).length ? '' : 'disabled'}>
+      <b>${semContato}</b><span>sem contato há ${db.cfg.contato} dias ou mais</span><span class="go">Ver quem são →</span>
+    </button>`;
+
+  const itens = todos
+    .filter(c => !canal || c.canal === canal)
+    .filter(c => !res || c.resultado === res)
+    .filter(c => !q || (c.a.nome + ' ' + (c.obs||'')).toLowerCase().includes(q))
+    .sort((x,y)=> x.data < y.data ? 1 : x.data > y.data ? -1 : 0);
+
+  if(!itens.length){
+    $('#listaContatos').innerHTML = `<div class="empty">${todos.length
+      ? 'Nenhum contato com esses filtros.'
+      : 'Nenhum contato registrado ainda. Abra a ficha de um aluno e registre a conversa.'}</div>`;
+    return;
+  }
+  let html = '', dia = null;
+  for(const c of itens){
+    if(c.data !== dia){
+      dia = c.data;
+      const n = itens.filter(x => x.data === dia).length;
+      html += `<div class="dia"><span>${rotuloDia(dia)} · ${haQuanto(dia)}</span><span>${n} ${n === 1 ? 'contato' : 'contatos'}</span></div>`;
+    }
+    const s = semaforo(c.a);
+    html += `<div class="ct" data-id="${esc(c.a.id)}" tabindex="0">
+        <span class="dotc ${s.cor}" title="Sinal ${SINAL[s.cor]}"></span>
+        <div class="ct-body">
+          <div class="ct-top">
+            <b>${esc(c.a.nome)}</b>
+            ${c.resultado ? `<span class="flag ${RESULTADOS[c.resultado] || 'gry'}">${esc(c.resultado)}</span>` : ''}
+            <span class="canal">${esc(c.canal)}</span>
+          </div>
+          ${c.obs ? `<p>${esc(c.obs)}</p>` : ''}
+        </div>
+      </div>`;
+  }
+  $('#listaContatos').innerHTML = `<div class="board">${html}</div>`;
+}
+
+function telaDados(){
+  $('#cfgCanvas').value  = db.cfg.canvas;
+  $('#cfgCritico').value = canvasCritico();
+  $('#cfgNovo').value    = db.cfg.novoDias;
+  $('#cfgContato').value = db.cfg.contato;
+  $('#listaImports').innerHTML = db.importacoes.length
+    ? db.importacoes.map(i=>`
+        <div class="row"><div class="who">
+          <b>${dataBR(i.em)}</b>
+          <small>${i.total} alunos na lista · ${i.novos} novos · ${i.atualizados} atualizados${i.sumiram?` · ${i.sumiram} saíram`:''}</small>
+        </div></div>`).join('')
+    : `<div class="empty">Nenhuma importação ainda.</div>`;
+}
+
+/* ============================================================
+   Ficha do aluno
+   ============================================================ */
+function abrirFicha(id){
+  const a = db.alunos[id]; if(!a) return;
+  const r = analise(a);
+  const s = semaforo(a, r);
+  const hist = (a.historico||[]).slice(-8).reverse();
+  const cts  = (a.contatos||[]).slice().sort((x,y)=> x.data < y.data ? 1 : -1);
+  const presencas = encontrosOrdenados().filter(e => e.presencas[id]);
+
+  $('#modal').innerHTML = `
+  <div class="scrim" data-fechar></div>
+  <aside class="sheet" role="dialog" aria-label="Ficha do aluno">
+    <div class="sheet-head">
+      <button class="x" data-fechar aria-label="Fechar">×</button>
+      <h3>${esc(a.nome)}</h3>
+      <p>${esc(a.cidade||'')}${a.idade?' · '+esc(a.idade)+' anos':''}${a.matricula?' · nº '+esc(a.matricula):''}</p>
+    </div>
+    <div class="sheet-body">
+
+      <div class="blk">
+        <div class="ficha-sinal">
+          ${pillSinal(s)}
+          <span class="muted" style="font-size:13px">${s.motivos.length ? esc(s.motivos.join(' · ')) : s.cor === 'gry' ? 'Marcado como desistente.' : 'Nenhum alerta: está em dia.'}</span>
+        </div>
+        ${etiquetas(a,r) ? `<div class="flags" style="justify-content:flex-start;margin-top:10px">${etiquetas(a,r)}</div>` : ''}
+        ${a.telefone ? `<div style="margin-top:12px">${linkWa(a)}</div>` : ''}
+      </div>
+
+      <div class="blk">
+        <h4>Situação</h4>
+        <select id="fStatus" class="fld">
+          ${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${a.status===k?'selected':''}>${v.rot}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="blk">
+        <h4>Registrar um contato</h4>
+        <div class="stack">
+          <div class="cols">
+            <input type="date" id="cData" class="fld" value="${hojeISO()}">
+            <select id="cCanal" class="fld">${CANAIS.map(c=>`<option>${c}</option>`).join('')}</select>
+          </div>
+          <select id="cResultado" class="fld">
+            <option>Falou com o aluno</option>
+            <option>Não atendeu</option>
+            <option>Deixou recado</option>
+            <option>Prometeu voltar</option>
+            <option>Vai sair do curso</option>
+          </select>
+          <textarea id="cObs" class="fld" placeholder="O que ele contou, o que ficou combinado"></textarea>
+          <button class="btn gold" id="btnSalvarContato">Salvar contato</button>
+        </div>
+      </div>
+
+      <div class="blk">
+        <h4>Contatos anteriores</h4>
+        ${cts.length ? cts.map(c=>`
+          <div class="log">
+            <div class="meta">${dataBR(c.data)} · ${esc(c.canal)} · ${esc(c.resultado||'')}</div>
+            ${c.obs?`<p>${esc(c.obs)}</p>`:''}
+            <button class="del" data-delc="${c.id}" style="margin-top:6px">excluir</button>
+          </div>`).join('') : '<p class="sub">Nenhum contato registrado.</p>'}
+      </div>
+
+      <div class="blk">
+        <h4>Presença nos encontros</h4>
+        ${presencas.length ? presencas.map(e=>{
+            const v = e.presencas[id];
+            const cls = v==='P'?'grn':v==='F'?'red':'yel';
+            const rot = v==='P'?'presente':v==='F'?'faltou':'justificou';
+            return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #EDF0F4;font-size:13.5px">
+                      <span>${dataBR(e.data)}</span><span class="flag ${cls}">${rot}</span></div>`;
+          }).join('') : '<p class="sub">Nenhuma chamada registrada.</p>'}
+      </div>
+
+      <div class="blk">
+        <h4>Acesso ao Canvas</h4>
+        <dl class="kv">
+          <dt>Último acesso</dt><dd>${dataBR(a.ultimoAcesso)}${r.semCanvas!=null?` (há ${r.semCanvas} dias)`:''}</dd>
+        </dl>
+        ${hist.length>1 ? `<div style="margin-top:9px;font-size:13px;color:var(--ink-soft)">
+            ${hist.map(h=>`<div>importado em ${dataBR(h.em)} → acesso em ${dataBR(h.acesso)}</div>`).join('')}
+          </div>` : ''}
+      </div>
+
+      <div class="blk">
+        <h4>Contato</h4>
+        <dl class="kv">
+          <dt>Telefone</dt><dd>${a.telefone?`<a href="https://wa.me/${esc(String(a.telefone).replace(/\D/g,''))}" target="_blank" rel="noopener">${esc(a.telefone)}</a>`:'—'}</dd>
+          <dt>E-mail Pathway</dt><dd>${esc(a.email||'—')}</dd>
+          <dt>E-mail pessoal</dt><dd>${esc(a.email2||'—')}</dd>
+          <dt>Cidade</dt><dd>${esc(a.cidade||'—')}</dd>
+          <dt>Membro</dt><dd>${a.membro==='Yes'?'Sim':a.membro==='No'?'Não':esc(a.membro||'—')}</dd>
+        </dl>
+      </div>
+
+      <div class="blk">
+        <h4>Anotações</h4>
+        <textarea id="fNotas" class="fld" placeholder="Observações do casal missionário">${esc(a.notas||'')}</textarea>
+        <button class="btn ghost sm" id="btnNotas" style="margin-top:8px">Salvar anotações</button>
+      </div>
+    </div>
+  </aside>`;
+
+  $$('[data-fechar]').forEach(b => b.onclick = fecharFicha);
+  $('#fStatus').onchange = e => { a.status = e.target.value; salvar(); render(); aviso('Situação atualizada.'); };
+  $('#btnNotas').onclick = () => { a.notas = $('#fNotas').value; salvar(); aviso('Anotações salvas.'); };
+  $('#btnSalvarContato').onclick = () => {
+    a.contatos = a.contatos || [];
+    a.contatos.push({ id:uid(), data:$('#cData').value || hojeISO(), canal:$('#cCanal').value,
+                      resultado:$('#cResultado').value, obs:$('#cObs').value.trim() });
+    salvar(); render(); abrirFicha(id); aviso('Contato registrado.');
+  };
+  $$('[data-delc]').forEach(b => b.onclick = () => {
+    a.contatos = a.contatos.filter(c => c.id !== b.dataset.delc);
+    salvar(); render(); abrirFicha(id);
+  });
+  document.addEventListener('keydown', escFechar);
+}
+function fecharFicha(){ $('#modal').innerHTML = ''; document.removeEventListener('keydown', escFechar); }
+function escFechar(e){ if(e.key === 'Escape') fecharFicha(); }
+
+/* ============================================================
+   Eventos
+   ============================================================ */
+$$('.tab').forEach(t => t.onclick = () => irPara(t.dataset.tab));
+
+document.addEventListener('click', e => {
+  if(e.target.closest('a[href]')) return;               // WhatsApp e outros links seguem normalmente
+
+  const cond = e.target.closest('[data-cond]');
+  if(cond){ verAlunos(cond.dataset.cond, ''); return; }
+  const sin = e.target.closest('[data-sinal]');
+  if(sin){ verAlunos('', sin.dataset.sinal); return; }
+  const chip = e.target.closest('[data-chip]');
+  if(chip){ ui.sinal = chip.dataset.chip; tabelaAlunos(); return; }
+  const ord = e.target.closest('th[data-sort]');
+  if(ord){
+    const k = ord.dataset.sort;
+    ui.ordem = ui.ordem.col === k ? {col:k, dir:-ui.ordem.dir} : {col:k, dir:1};
+    tabelaAlunos(); return;
+  }
+  if(e.target.closest('#limparFiltros')){ limparFiltros(); return; }
+
+  const mb = e.target.closest('[data-marca]');
+  if(mb){ marcar(mb.dataset.enc, mb.dataset.al, mb.dataset.marca, true); return; }
+  const sel = e.target.closest('[data-sel]');
+  if(sel){
+    ui.encSel = sel.dataset.sel; telaEncontros();
+    $('#chamada').scrollIntoView({behavior:'smooth', block:'start'});
+    return;
+  }
+  const nav = e.target.closest('[data-navenc]');
+  if(nav){
+    const encs = encontrosAsc();
+    const i = encs.findIndex(x => x.id === ui.encSel) + Number(nav.dataset.navenc);
+    if(encs[i]){ ui.encSel = encs[i].id; telaEncontros(); }
+    return;
+  }
+
+  const linha = e.target.closest('.row[data-id], tr[data-id], .ct[data-id]');
+  if(linha){ abrirFicha(linha.dataset.id); return; }
+
+  const cel = e.target.closest('.mk');
+  if(cel){
+    const enc = db.encontros.find(x => x.id === cel.dataset.enc);
+    if(enc){
+      const ciclo = {'':'P', 'P':'F', 'F':'J', 'J':''};
+      marcar(enc.id, cel.dataset.al, ciclo[enc.presencas[cel.dataset.al] || ''], false);
+    }
+    return;
+  }
+  const snapBtn = e.target.closest('[data-snap]');
+  if(snapBtn){ restaurarCopia(+snapBtn.dataset.snap); return; }
+  const td = e.target.closest('[data-todos]');
+  if(td){
+    const enc = db.encontros.find(x => x.id === td.dataset.todos);
+    listaAlunos().filter(a=>a.status!=='desistente').forEach(a => { if(!enc.presencas[a.id]) enc.presencas[a.id] = 'P'; });
+    salvar(); render(); return;
+  }
+  const de = e.target.closest('.del-enc');
+  if(de){
+    if(confirm('Excluir este encontro e a chamada dele?')){
+      db.encontros = db.encontros.filter(x => x.id !== de.dataset.enc);
+      salvar(); render();
+    }
+    return;
+  }
+});
+
+/* linhas clicáveis também abrem a ficha pelo teclado */
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const linha = e.target.matches && e.target.matches('.row[data-id], tr[data-id], .ct[data-id]') ? e.target : null;
+  if(linha){ e.preventDefault(); abrirFicha(linha.dataset.id); }
+});
+
+function marcar(encId, al, valor, alternar){
+  const enc = db.encontros.find(x => x.id === encId); if(!enc) return;
+  if(!valor || (alternar && enc.presencas[al] === valor)) delete enc.presencas[al];
+  else enc.presencas[al] = valor;
+  salvar(); painel(); tabelaAlunos(); telaEncontros();
+  // devolve o foco ao mesmo botão para a chamada seguir pelo teclado
+  const alvo = $$(alternar ? `[data-marca="${valor}"]` : '.mk')
+                 .find(b => b.dataset.enc === encId && b.dataset.al === al);
+  if(alvo) alvo.focus({preventScroll:true});
+}
+
+async function restaurarCopia(i){
+  const copias = await lerCopias();
+  const c = copias[i]; if(!c) return;
+  if(!confirm(`Voltar para a cópia de ${dataBR(c.em)} às ${c.hora}? O que você registrou depois disso será perdido.`)) return;
+  await guardarCopia('antes de voltar a uma cópia', true);
+  db = Object.assign(novoBanco(), JSON.parse(c.dados));
+  salvar(); render(); aviso('Cópia restaurada.');
+}
+
+$('#verDesistentes').onchange  = telaEncontros;
+$('#busca').oninput            = tabelaAlunos;
+$('#filtroStatus').onchange    = tabelaAlunos;
+$('#filtroCond').onchange      = e => { ui.cond = e.target.value; tabelaAlunos(); };
+$('#filtroCanal').onchange     = telaContatos;
+$('#filtroResultado').onchange = telaContatos;
+$('#buscaContato').oninput     = telaContatos;
+
+$('#btnNovoEncontro').onclick = () => {
+  const d = $('#novaData').value || hojeISO();
+  if(db.encontros.some(e => e.data === d)){ aviso('Já existe um encontro nessa data.'); return; }
+  const novo = { id:uid(), data:d, tema:$('#novoTema').value.trim(), presencas:{}, aberto:true };
+  db.encontros.push(novo);
+  ui.encSel = novo.id;                       // a chamada abre direto no encontro recém-criado
+  $('#novoTema').value = '';
+  salvar(); render(); aviso('Encontro criado. Faça a chamada abaixo.');
+};
+
+/* importação */
+const drop = $('#drop');
+$('#btnEscolher').onclick = () => $('#file').click();
+$('#file').onchange = e => { if(e.target.files[0]) importar(e.target.files[0]); e.target.value=''; };
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if(f) importar(f); });
+
+/* cópia de segurança */
+$('#btnBackup').onclick = () =>
+  baixar(`pc102-backup-${hojeISO()}.json`, JSON.stringify(db, null, 2), 'application/json');
+$('#btnRestaurar').onclick = () => $('#fileRestore').click();
+$('#fileRestore').onchange = async e => {
+  const f = e.target.files[0]; if(!f) return;
+  try{
+    const novo = JSON.parse(await f.text());
+    if(!novo.alunos) throw 0;
+    if(confirm('Restaurar essa cópia? Os dados atuais serão substituídos.')){
+      db = Object.assign(novoBanco(), novo); salvar(); render(); aviso('Cópia restaurada.');
+    }
+  }catch(err){ aviso('Esse arquivo não é uma cópia válida.'); }
+  e.target.value='';
+};
+$('#btnCsvAlunos').onclick = () => {
+  const linhas = [csvLinha(['Aluno','Matrícula','Telefone','E-mail','Último acesso Canvas','Dias sem Canvas','Faltas','Faltas seguidas','Último contato','Situação'])];
+  listaAlunos().forEach(a=>{ const r = analise(a);
+    linhas.push(csvLinha([a.nome,a.matricula,a.telefone,a.email,dataBR(a.ultimoAcesso),
+      r.semCanvas??'',faltasTotais(a.id),r.seguidas,dataBR(ultimoContato(a.id)),(STATUS[a.status]||STATUS.ativo).rot])); });
+  baixar(`pc102-alunos-${hojeISO()}.csv`, '\uFEFF'+linhas.join('\n'), 'text/csv');
+};
+$('#btnCsvContatos').onclick = () => {
+  const linhas = [csvLinha(['Data','Aluno','Canal','Resultado','Observação'])];
+  Object.values(db.alunos).forEach(a => (a.contatos||[]).forEach(c =>
+    linhas.push(csvLinha([dataBR(c.data), a.nome, c.canal, c.resultado, c.obs]))));
+  baixar(`pc102-contatos-${hojeISO()}.csv`, '\uFEFF'+linhas.join('\n'), 'text/csv');
+};
+$('#cfgCanvas').onchange  = e => { db.cfg.canvas  = Math.max(1, +e.target.value||7); salvar(); render(); };
+$('#cfgCritico').onchange = e => { db.cfg.canvasCritico = Math.max(1, +e.target.value||10); salvar(); render(); };
+$('#cfgNovo').onchange    = e => { db.cfg.novoDias = Math.max(1, +e.target.value||14); salvar(); render(); };
+$('#cfgContato').onchange = e => { db.cfg.contato = Math.max(1, +e.target.value||7); salvar(); render(); };
+$('#btnLimpar').onclick = () => {
+  if(confirm('Apagar alunos, presenças e contatos? Isso não pode ser desfeito.')){
+    db = novoBanco(); salvar(); render(); aviso('Tudo apagado.');
+  }
+};
+
+/* ao voltar para a janela do app (ou virar o dia), refaz os números */
+document.addEventListener('visibilitychange', () => { if(!document.hidden) render(); });
+
+/* início */
+$('#novaData').value = hojeISO();
+carregar().then(()=>{
+  render();
+  if(Object.keys(db.alunos).length) marcaSalvamento('dados carregados — tudo é salvo sozinho');
+});
+</script>
+</body>
+</html>

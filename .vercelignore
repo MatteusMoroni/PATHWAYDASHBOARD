@@ -1,0 +1,8 @@
+# Só o site estático vai para a Vercel
+.github/
+.claude/
+scripts/
+README.md
+dados-demo/*.py
+.htmlvalidate.json
+.gitattributes

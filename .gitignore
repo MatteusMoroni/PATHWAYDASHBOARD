@@ -1,0 +1,21 @@
+# Vercel
+.vercel/
+
+# Node / ferramentas
+node_modules/
+
+# Python (scripts de dados-demo)
+__pycache__/
+*.pyc
+.venv/
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.claude/settings.local.json
+
+# Variáveis de ambiente
+.env
+.env.*

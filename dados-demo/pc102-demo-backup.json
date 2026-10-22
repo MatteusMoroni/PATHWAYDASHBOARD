@@ -1,0 +1,1316 @@
+{
+  "versao": 1,
+  "turma": "PC 102 - Block 4",
+  "cfg": {
+    "canvas": 7,
+    "contato": 7
+  },
+  "alunos": {
+    "99000001": {
+      "id": "99000001",
+      "nome": "Ana Clara Moreira",
+      "matricula": "99000001",
+      "email": "ana.moreira@pathway-demo.example",
+      "email2": "anamoreira24@mail-demo.example",
+      "telefone": "5511999990001",
+      "idade": 24,
+      "genero": "Female",
+      "cidade": "São Paulo",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-14",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-24"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-10-01"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-05"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-08"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-14"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000002": {
+      "id": "99000002",
+      "nome": "Bruno Teixeira Lima",
+      "matricula": "99000002",
+      "email": "bruno.lima@pathway-demo.example",
+      "email2": "brunolima31@mail-demo.example",
+      "telefone": "5519999990002",
+      "idade": 31,
+      "genero": "Male",
+      "cidade": "Campinas",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-30"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-04"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [
+        {
+          "id": "gt57zr1t",
+          "data": "2026-10-12",
+          "canal": "Presencial",
+          "resultado": "Falou com o aluno",
+          "obs": "Conversamos depois da reunião da ala; está animado com a turma."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000003": {
+      "id": "99000003",
+      "nome": "Camila Duarte Ribeiro",
+      "matricula": "99000003",
+      "email": "camila.ribeiro@pathway-demo.example",
+      "email2": "",
+      "telefone": "5521999990003",
+      "idade": 27,
+      "genero": "Female",
+      "cidade": "Rio de Janeiro",
+      "pais": "Brazil",
+      "membro": "No",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-22"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-29"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-03"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-06"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000004": {
+      "id": "99000004",
+      "nome": "Daniel Fonseca Prado",
+      "matricula": "99000004",
+      "email": "daniel.prado@pathway-demo.example",
+      "email2": "danielprado45@mail-demo.example",
+      "telefone": "5531999990004",
+      "idade": 45,
+      "genero": "Male",
+      "cidade": "Belo Horizonte",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-14",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-24"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-30"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-05"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-08"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-14"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000005": {
+      "id": "99000005",
+      "nome": "Eduarda Martins Rocha",
+      "matricula": "99000005",
+      "email": "eduarda.rocha@pathway-demo.example",
+      "email2": "eduardarocha22@mail-demo.example",
+      "telefone": "5541999990005",
+      "idade": 22,
+      "genero": "Female",
+      "cidade": "Curitiba",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-10-01"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-04"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-08"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000006": {
+      "id": "99000006",
+      "nome": "Felipe Nogueira Batista",
+      "matricula": "99000006",
+      "email": "felipe.batista@pathway-demo.example",
+      "email2": "felipebatista38@mail-demo.example",
+      "telefone": "5551999990006",
+      "idade": 38,
+      "genero": "Male",
+      "cidade": "Porto Alegre",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-14",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-24"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-29"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-05"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-14"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [
+        {
+          "id": "4ah0506v",
+          "data": "2026-10-13",
+          "canal": "WhatsApp",
+          "resultado": "Falou com o aluno",
+          "obs": "Pediu dica de como organizar as tarefas da semana."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000007": {
+      "id": "99000007",
+      "nome": "Gabriela Souza Pires",
+      "matricula": "99000007",
+      "email": "gabriela.pires@pathway-demo.example",
+      "email2": "",
+      "telefone": "5548999990007",
+      "idade": 29,
+      "genero": "Female",
+      "cidade": "Florianópolis",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-14",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-22"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-10-01"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-03"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-14"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000008": {
+      "id": "99000008",
+      "nome": "Henrique Campos Vidal",
+      "matricula": "99000008",
+      "email": "henrique.vidal@pathway-demo.example",
+      "email2": "henriquevidal52@mail-demo.example",
+      "telefone": "5571999990008",
+      "idade": 52,
+      "genero": "Male",
+      "cidade": "Salvador",
+      "pais": "Brazil",
+      "membro": "No",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-30"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-04"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-06"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000009": {
+      "id": "99000009",
+      "nome": "Isabela Cardoso Lemos",
+      "matricula": "99000009",
+      "email": "isabela.lemos@pathway-demo.example",
+      "email2": "isabelalemos33@mail-demo.example",
+      "telefone": "5581999980009",
+      "idade": 33,
+      "genero": "Female",
+      "cidade": "Recife",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-24"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-10-01"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-05"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-08"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000010": {
+      "id": "99000010",
+      "nome": "Juliano Barros Machado",
+      "matricula": "99000010",
+      "email": "juliano.machado@pathway-demo.example",
+      "email2": "julianomachado26@mail-demo.example",
+      "telefone": "5585999990010",
+      "idade": 26,
+      "genero": "Male",
+      "cidade": "Fortaleza",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-27"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-29"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [
+        {
+          "id": "ootcoyhe",
+          "data": "2026-10-05",
+          "canal": "WhatsApp",
+          "resultado": "Falou com o aluno",
+          "obs": "Faltou dia 23/09 por plantão no trabalho; vai repor a leitura."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000011": {
+      "id": "99000011",
+      "nome": "Larissa Mendes Coelho",
+      "matricula": "99000011",
+      "email": "larissa.coelho@pathway-demo.example",
+      "email2": "larissacoelho41@mail-demo.example",
+      "telefone": "5562999990011",
+      "idade": 41,
+      "genero": "Female",
+      "cidade": "Goiânia",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-09-28",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-21"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-26"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-28"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-09-28"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-09-28"
+        }
+      ],
+      "status": "atencao",
+      "notas": "Mãe internada. Ligar de novo depois da alta.",
+      "contatos": [
+        {
+          "id": "q1s29qvn",
+          "data": "2026-10-02",
+          "canal": "WhatsApp",
+          "resultado": "Não atendeu",
+          "obs": "Mensagem enviada, sem visualização."
+        },
+        {
+          "id": "0igal77a",
+          "data": "2026-10-06",
+          "canal": "Ligação",
+          "resultado": "Deixou recado",
+          "obs": "Caixa postal; deixamos recado pedindo retorno."
+        },
+        {
+          "id": "zzafoopc",
+          "data": "2026-10-08",
+          "canal": "WhatsApp",
+          "resultado": "Prometeu voltar",
+          "obs": "Respondeu que a mãe está internada; promete voltar após a alta."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000012": {
+      "id": "99000012",
+      "nome": "Marcos Vieira Antunes",
+      "matricula": "99000012",
+      "email": "marcos.antunes@pathway-demo.example",
+      "email2": "marcosantunes19@mail-demo.example",
+      "telefone": "5561999990012",
+      "idade": 19,
+      "genero": "Male",
+      "cidade": "Brasília",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-24"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-03"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "Tinha dificuldade com o Canvas. Já resolvido.",
+      "contatos": [
+        {
+          "id": "4ie4ny4y",
+          "data": "2026-10-02",
+          "canal": "Ligação",
+          "resultado": "Falou com o aluno",
+          "obs": "Não sabia enviar a tarefa no Canvas; mostramos passo a passo."
+        },
+        {
+          "id": "vi917c81",
+          "data": "2026-10-12",
+          "canal": "WhatsApp",
+          "resultado": "Falou com o aluno",
+          "obs": "Confirmou que entregou tudo da semana."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000013": {
+      "id": "99000013",
+      "nome": "Natália Freitas Rangel",
+      "matricula": "99000013",
+      "email": "natalia.rangel@pathway-demo.example",
+      "email2": "nataliarangel35@mail-demo.example",
+      "telefone": "5592999990013",
+      "idade": 35,
+      "genero": "Female",
+      "cidade": "Manaus",
+      "pais": "Brazil",
+      "membro": "No",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-27"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-27"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "Problema de internet. Pode usar o wi-fi da capela.",
+      "contatos": [
+        {
+          "id": "odbv9j71",
+          "data": "2026-10-06",
+          "canal": "WhatsApp",
+          "resultado": "Não atendeu",
+          "obs": "Mensagem sem resposta."
+        },
+        {
+          "id": "1ckillrq",
+          "data": "2026-10-07",
+          "canal": "Ligação",
+          "resultado": "Falou com o aluno",
+          "obs": "Ficou sem internet em casa; vai usar o wi-fi da capela."
+        },
+        {
+          "id": "a9vnmcku",
+          "data": "2026-10-13",
+          "canal": "Mensagem no Canvas",
+          "resultado": "Falou com o aluno",
+          "obs": "Internet voltou; já está em dia com as tarefas."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000014": {
+      "id": "99000014",
+      "nome": "Otávio Brandão Siqueira",
+      "matricula": "99000014",
+      "email": "otavio.siqueira@pathway-demo.example",
+      "email2": "otavio.siqueira.pessoal@mail-demo.example",
+      "telefone": "5591999990014",
+      "idade": 28,
+      "genero": "Male",
+      "cidade": "Belém",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-12",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-22"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-28"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-28"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-09-28"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-12"
+        }
+      ],
+      "status": "ativo",
+      "notas": "Novo emprego. Combinamos estudar de terça e quinta à noite.",
+      "contatos": [
+        {
+          "id": "25bribts",
+          "data": "2026-10-06",
+          "canal": "E-mail",
+          "resultado": "Deixou recado",
+          "obs": "E-mail perguntando se está tudo bem."
+        },
+        {
+          "id": "85bje5wr",
+          "data": "2026-10-09",
+          "canal": "WhatsApp",
+          "resultado": "Falou com o aluno",
+          "obs": "Mudou de emprego e perdeu o ritmo; combinamos um horário fixo de estudo."
+        },
+        {
+          "id": "47qhb5ff",
+          "data": "2026-10-13",
+          "canal": "WhatsApp",
+          "resultado": "Falou com o aluno",
+          "obs": "Mandou novo e-mail pessoal; voltou a acessar o Canvas."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000015": {
+      "id": "99000015",
+      "nome": "Patrícia Lopes Andrade",
+      "matricula": "99000015",
+      "email": "patricia.andrade@pathway-demo.example",
+      "email2": "patriciaandrade47@mail-demo.example",
+      "telefone": "5584999990015",
+      "idade": 47,
+      "genero": "Female",
+      "cidade": "Natal",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-12",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-10-01"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-01"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-01"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-12"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [
+        {
+          "id": "i9lx0uer",
+          "data": "2026-10-09",
+          "canal": "Ligação",
+          "resultado": "Falou com o aluno",
+          "obs": "Achou que tinha perdido o prazo e desanimou; explicamos a política de atraso."
+        },
+        {
+          "id": "epy9nnh8",
+          "data": "2026-10-14",
+          "canal": "WhatsApp",
+          "resultado": "Falou com o aluno",
+          "obs": "Entregou as tarefas atrasadas e agradeceu."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000016": {
+      "id": "99000016",
+      "nome": "Rodrigo Pacheco Dias",
+      "matricula": "99000016",
+      "email": "rodrigo.dias@pathway-demo.example",
+      "email2": "rodrigodias23@mail-demo.example",
+      "telefone": "5547999990016",
+      "idade": 23,
+      "genero": "Male",
+      "cidade": "Joinville",
+      "pais": "Brazil",
+      "membro": "No",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-04",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-21"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-25"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-30"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-04"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-04"
+        }
+      ],
+      "status": "risco",
+      "notas": "Parou de acessar em 04/10 e faltou duas vezes. Ainda não ligamos.",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000017": {
+      "id": "99000017",
+      "nome": "Sabrina Monteiro Reis",
+      "matricula": "99000017",
+      "email": "sabrina.reis@pathway-demo.example",
+      "email2": "sabrinareis30@mail-demo.example",
+      "telefone": "5543999990017",
+      "idade": 30,
+      "genero": "Female",
+      "cidade": "Londrina",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-10",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-23"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-30"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-03"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-10"
+        }
+      ],
+      "status": "atencao",
+      "notas": "Faltou ao último encontro. Mandar mensagem nesta semana.",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000018": {
+      "id": "99000018",
+      "nome": "Thiago Albuquerque Neves",
+      "matricula": "99000018",
+      "email": "thiago.neves@pathway-demo.example",
+      "email2": "",
+      "telefone": "5527999990018",
+      "idade": 20,
+      "genero": "Male",
+      "cidade": "Vitória",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": null,
+      "historico": [],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000019": {
+      "id": "99000019",
+      "nome": "Vanessa Correia Tavares",
+      "matricula": "99000019",
+      "email": "vanessa.tavares@pathway-demo.example",
+      "email2": "vanessatavares39@mail-demo.example",
+      "telefone": "5534999990019",
+      "idade": 39,
+      "genero": "Female",
+      "cidade": "Uberlândia",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-22"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-30"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-04"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "saiuEm": "2026-10-08",
+      "entrouEm": "2026-09-24"
+    },
+    "99000020": {
+      "id": "99000020",
+      "nome": "Wagner Matos Figueira",
+      "matricula": "99000020",
+      "email": "wagner.figueira@pathway-demo.example",
+      "email2": "wagnerfigueira44@mail-demo.example",
+      "telefone": "5513999990020",
+      "idade": 44,
+      "genero": "Male",
+      "cidade": "Santos",
+      "pais": "Brazil",
+      "membro": "No",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-09-07",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-07"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-07"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-07"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-09-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-09-07"
+        }
+      ],
+      "status": "desistente",
+      "notas": "Saiu para priorizar o trabalho. Convidar para o próximo bloco.",
+      "contatos": [
+        {
+          "id": "osxuss1l",
+          "data": "2026-09-17",
+          "canal": "Ligação",
+          "resultado": "Vai sair do curso",
+          "obs": "Vai priorizar o trabalho neste semestre; pensa em voltar no próximo bloco."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000021": {
+      "id": "99000021",
+      "nome": "Yasmin Carvalho Peixoto",
+      "matricula": "99000021",
+      "email": "yasmin.peixoto@pathway-demo.example",
+      "email2": "",
+      "telefone": "5516999990021",
+      "idade": 21,
+      "genero": "Female",
+      "cidade": "Ribeirão Preto",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-09-15",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-15"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-15"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-15"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-09-15"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-09-15"
+        }
+      ],
+      "status": "desistente",
+      "notas": "Mudou de cidade. Pode voltar no ano que vem.",
+      "contatos": [
+        {
+          "id": "dbk8qddn",
+          "data": "2026-09-25",
+          "canal": "WhatsApp",
+          "resultado": "Vai sair do curso",
+          "obs": "Mudança de cidade; vai trancar e tentar no próximo ano."
+        }
+      ],
+      "saiuDoExport": false,
+      "entrouEm": "2026-09-24"
+    },
+    "99000022": {
+      "id": "99000022",
+      "nome": "Leandro Quintela Farias",
+      "matricula": "99000022",
+      "email": "leandro.farias@pathway-demo.example",
+      "email2": "leandrofarias34@mail-demo.example",
+      "telefone": "5582999990022",
+      "idade": 34,
+      "genero": "Male",
+      "cidade": "Maceió",
+      "pais": "Brazil",
+      "membro": "No",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-09-26",
+      "historico": [
+        {
+          "em": "2026-09-24",
+          "acesso": "2026-09-20"
+        },
+        {
+          "em": "2026-10-01",
+          "acesso": "2026-09-24"
+        },
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-09-26"
+        }
+      ],
+      "status": "risco",
+      "notas": "Sumiu do export em 08/10. Pedir ajuda ao líder da ala.",
+      "contatos": [
+        {
+          "id": "x3p25v6l",
+          "data": "2026-09-30",
+          "canal": "WhatsApp",
+          "resultado": "Não atendeu",
+          "obs": "Mensagem não entregue."
+        },
+        {
+          "id": "5j4wt8pc",
+          "data": "2026-10-03",
+          "canal": "Ligação",
+          "resultado": "Não atendeu",
+          "obs": "Telefone chama e cai."
+        },
+        {
+          "id": "fx2phuul",
+          "data": "2026-10-07",
+          "canal": "Outro",
+          "resultado": "Deixou recado",
+          "obs": "Pedimos ao líder da ala para avisar que estamos procurando por ele."
+        }
+      ],
+      "saiuDoExport": true,
+      "saiuEm": "2026-10-08",
+      "entrouEm": "2026-09-24"
+    },
+    "99000023": {
+      "id": "99000023",
+      "nome": "Kátia Sampaio Furtado",
+      "matricula": "99000023",
+      "email": "katia.furtado@pathway-demo.example",
+      "email2": "katiafurtado25@mail-demo.example",
+      "telefone": "5583999990023",
+      "idade": 25,
+      "genero": "Female",
+      "cidade": "João Pessoa",
+      "pais": "Brazil",
+      "membro": "Yes",
+      "turma": "PC 102 - Block 4",
+      "ultimoAcesso": "2026-10-13",
+      "historico": [
+        {
+          "em": "2026-10-05",
+          "acesso": "2026-10-04"
+        },
+        {
+          "em": "2026-10-08",
+          "acesso": "2026-10-07"
+        },
+        {
+          "em": "2026-10-14",
+          "acesso": "2026-10-13"
+        }
+      ],
+      "status": "ativo",
+      "notas": "",
+      "contatos": [],
+      "saiuDoExport": false,
+      "entrouEm": "2026-10-05"
+    }
+  },
+  "encontros": [
+    {
+      "id": "l3jnmksr",
+      "data": "2026-09-09",
+      "tema": "Boas-vindas e metas do bloco",
+      "presencas": {
+        "99000001": "P",
+        "99000002": "P",
+        "99000003": "P",
+        "99000004": "P",
+        "99000005": "P",
+        "99000006": "P",
+        "99000007": "P",
+        "99000008": "P",
+        "99000009": "P",
+        "99000010": "P",
+        "99000011": "P",
+        "99000012": "P",
+        "99000013": "P",
+        "99000014": "P",
+        "99000015": "P",
+        "99000016": "P",
+        "99000017": "P",
+        "99000018": "P",
+        "99000019": "P",
+        "99000020": "P",
+        "99000021": "P",
+        "99000022": "P"
+      },
+      "aberto": true
+    },
+    {
+      "id": "92oo6c4a",
+      "data": "2026-09-16",
+      "tema": "Gestão do tempo",
+      "presencas": {
+        "99000001": "P",
+        "99000002": "P",
+        "99000003": "P",
+        "99000004": "P",
+        "99000005": "P",
+        "99000006": "P",
+        "99000007": "P",
+        "99000008": "P",
+        "99000009": "P",
+        "99000010": "P",
+        "99000011": "P",
+        "99000012": "P",
+        "99000013": "P",
+        "99000014": "P",
+        "99000015": "P",
+        "99000016": "P",
+        "99000017": "P",
+        "99000018": "P",
+        "99000019": "P",
+        "99000020": "F",
+        "99000021": "P",
+        "99000022": "P"
+      },
+      "aberto": true
+    },
+    {
+      "id": "wtc2wc16",
+      "data": "2026-09-23",
+      "tema": "Hábitos de estudo",
+      "presencas": {
+        "99000001": "P",
+        "99000002": "P",
+        "99000003": "P",
+        "99000004": "P",
+        "99000005": "J",
+        "99000006": "P",
+        "99000007": "P",
+        "99000008": "P",
+        "99000009": "P",
+        "99000010": "F",
+        "99000011": "P",
+        "99000012": "P",
+        "99000013": "P",
+        "99000014": "P",
+        "99000015": "P",
+        "99000016": "P",
+        "99000017": "P",
+        "99000018": "P",
+        "99000019": "P",
+        "99000020": "F",
+        "99000021": "F",
+        "99000022": "P"
+      },
+      "aberto": true
+    },
+    {
+      "id": "gwdduqfp",
+      "data": "2026-09-30",
+      "tema": "Comunicação eficaz",
+      "presencas": {
+        "99000001": "P",
+        "99000002": "P",
+        "99000003": "P",
+        "99000004": "P",
+        "99000005": "P",
+        "99000006": "P",
+        "99000007": "P",
+        "99000008": "P",
+        "99000009": "P",
+        "99000010": "P",
+        "99000011": "P",
+        "99000012": "F",
+        "99000013": "F",
+        "99000014": "P",
+        "99000015": "P",
+        "99000016": "P",
+        "99000017": "P",
+        "99000018": "P",
+        "99000019": "P",
+        "99000020": "F",
+        "99000021": "F",
+        "99000022": "F"
+      },
+      "aberto": true
+    },
+    {
+      "id": "es33bu8e",
+      "data": "2026-10-07",
+      "tema": "Autossuficiência e carreira",
+      "presencas": {
+        "99000001": "P",
+        "99000002": "P",
+        "99000003": "P",
+        "99000004": "P",
+        "99000005": "P",
+        "99000006": "P",
+        "99000007": "J",
+        "99000008": "P",
+        "99000009": "P",
+        "99000010": "P",
+        "99000011": "F",
+        "99000012": "P",
+        "99000013": "F",
+        "99000014": "F",
+        "99000015": "F",
+        "99000016": "F",
+        "99000017": "P",
+        "99000018": "P",
+        "99000019": "P",
+        "99000020": "F",
+        "99000021": "F",
+        "99000022": "F",
+        "99000023": "P"
+      },
+      "aberto": true
+    },
+    {
+      "id": "1kba23a6",
+      "data": "2026-10-14",
+      "tema": "Revisão e próximos passos",
+      "presencas": {
+        "99000001": "P",
+        "99000002": "P",
+        "99000003": "P",
+        "99000004": "P",
+        "99000005": "P",
+        "99000006": "P",
+        "99000007": "P",
+        "99000008": "P",
+        "99000009": "F",
+        "99000010": "P",
+        "99000011": "F",
+        "99000012": "P",
+        "99000013": "P",
+        "99000014": "P",
+        "99000015": "P",
+        "99000016": "F",
+        "99000017": "F",
+        "99000018": "F",
+        "99000019": "P",
+        "99000020": "F",
+        "99000021": "F",
+        "99000022": "F",
+        "99000023": "P"
+      },
+      "aberto": true
+    }
+  ],
+  "importacoes": [
+    {
+      "em": "2026-10-14",
+      "total": 22,
+      "novos": 0,
+      "atualizados": 22,
+      "sumiram": 0
+    },
+    {
+      "em": "2026-10-08",
+      "total": 21,
+      "novos": 0,
+      "atualizados": 21,
+      "sumiram": 2
+    },
+    {
+      "em": "2026-10-05",
+      "total": 23,
+      "novos": 1,
+      "atualizados": 22,
+      "sumiram": 0
+    },
+    {
+      "em": "2026-10-01",
+      "total": 22,
+      "novos": 0,
+      "atualizados": 22,
+      "sumiram": 0
+    },
+    {
+      "em": "2026-09-24",
+      "total": 22,
+      "novos": 22,
+      "atualizados": 0,
+      "sumiram": 0
+    }
+  ]
+}

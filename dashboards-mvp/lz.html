@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Painel do LZ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="comum.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="mark"><b>BYU</b><span>PATHWAY</span></div>
+    <div class="titles">
+      <h1 id="titulo">Painel do LZ</h1>
+      <p id="subtitulo"></p>
+    </div>
+    <div class="top-right">
+      <label>Simulação: ver como LZ da
+        <select id="zona" aria-label="Zona"></select>
+      </label>
+      <a href="lider.html">Painel do líder →</a>
+    </div>
+  </div>
+</header>
+<div class="rule"></div>
+
+<main>
+  <div class="aviso">Dados simulados para demonstração. Nenhum nome ou número é real.</div>
+
+  <!-- 1. a resposta em 5 segundos -->
+  <section>
+    <h2 id="tituloResumo">Como está a zona nesta semana</h2>
+    <p class="sub">Cada bolinha é um aluno da zona. Passe o mouse para ver os números.</p>
+    <div class="hero">
+      <div class="frases" id="frases"></div>
+      <div id="pessoas"></div>
+    </div>
+  </section>
+
+  <!-- 2. os três números combinados -->
+  <section>
+    <h2>Os três números da semana</h2>
+    <p class="meta-leg"><i></i> A marca dourada na barra é a meta sugerida.</p>
+    <div class="metricas" id="metricas"></div>
+  </section>
+
+  <!-- 3. o que fazer, dupla por dupla -->
+  <section>
+    <h2>Suas duplas</h2>
+    <p class="sub">Quem precisa de mais apoio aparece primeiro. Cada cartão sugere o próximo passo.</p>
+    <div class="lista" id="duplas"></div>
+  </section>
+
+  <!-- 4. está melhorando? -->
+  <section>
+    <h2>Como foi nas últimas semanas</h2>
+    <p class="sub">A coluna escura é esta semana. A linha tracejada é a meta.</p>
+    <div class="graficos" id="tendencia"></div>
+  </section>
+
+  <section>
+    <details class="extra">
+      <summary>Ver todos os números em tabela</summary>
+      <div class="tabela-wrap"><table id="tabela"></table></div>
+    </details>
+  </section>
+
+  <section>
+    <details class="extra" open>
+      <summary>Entenda os números</summary>
+      <dl class="glossario">
+        <dt>Aluno em dia</dt>
+        <dd>Está acessando o Canvas e vindo aos encontros, sem nenhum alerta no app da dupla.
+          <small>Alerta: 7 dias ou mais sem Canvas, faltou ao último encontro, ou mais de 2 faltas no bloco.</small></dd>
+        <dt>Aluno em alerta</dt>
+        <dd>Tem pelo menos um dos alertas acima. São os alunos que precisam de uma ligação ou mensagem.
+          <small>Em alerta = alunos ativos − alunos em dia.</small></dd>
+        <dt>Contato</dt>
+        <dd>Conta só quando a dupla registrou uma conversa com o aluno <b>nos últimos 7 dias</b>. Uma conversa de semanas atrás não conta.</dd>
+        <dt>Alunos ativos</dt>
+        <dd>Quem continua no curso, ou seja, quem não desistiu.</dd>
+        <dt>Entraram no Canvas</dt>
+        <dd>Alunos que abriram o Canvas pelo menos uma vez nos últimos 7 dias, segundo a lista do Portal.</dd>
+        <dt>Presença nos encontros</dt>
+        <dd>De todas as chamadas feitas no bloco, quantas foram presença. Falta justificada não conta contra.
+          <small>Presenças ÷ (presenças + faltas).</small></dd>
+        <dt>Cores das duplas</dt>
+        <dd><b>Precisa de apoio:</b> menos de ${REGRAS.emDiaVermelho}% dos alunos em dia, ou menos de ${REGRAS.contatoVermelho}% dos alertas com contato.<br>
+          <b>Acompanhar:</b> menos de ${REGRAS.emDiaAmarelo}% em dia, ou menos de ${REGRAS.contatoAmarelo}% dos alertas com contato.<br>
+          <b>Tudo bem:</b> as duas metas atingidas.<br>
+          <b>Sem dados recentes:</b> a dupla não envia números há mais de ${REGRAS.diasSemAtualizar} dias. Os números dela podem estar desatualizados.</dd>
+      </dl>
+    </details>
+  </section>
+</main>
+<div id="tip" class="tip" hidden></div>
+
+<script src="comum.js"></script>
+<script>
+const sel = document.getElementById('zona');
+ZONAS.forEach(z => sel.add(new Option(z.nome, z.id)));
+const pedida = new URLSearchParams(location.search).get('zona');
+sel.value = ZONAS.some(z => z.id === pedida) ? pedida : 'sul';
+sel.onchange = () => { history.replaceState(null, '', '?zona=' + sel.value); desenhar(); };
+
+document.querySelectorAll('.glossario dd').forEach(dd => {
+  dd.innerHTML = dd.innerHTML.replace(/\$\{REGRAS\.(\w+)\}/g, (_, k) => REGRAS[k]);
+});
+
+function desenhar(){
+  const z = ZONAS.find(x => x.id === sel.value);
+  const k = somar(z.duplas, W), k0 = somar(z.duplas, W - 1);
+  const linhas = z.duplas.map(d => { const kd = somar([d], W); return {d, kd, kd0:somar([d], W - 1), ap:apoio(kd, d)}; })
+    .sort((a, b) => (ORDEM_NIVEL[a.ap.nivel] - ORDEM_NIVEL[b.ap.nivel]) || (pct(a.kd.emDia, a.kd.ativos) - pct(b.kd.emDia, b.kd.ativos)));
+  const precisam = linhas.filter(l => l.ap.nivel === 'red').length;
+  const semContato = k.alertas - k.contatados;
+
+  document.title = `Painel do LZ · ${z.nome}`;
+  document.getElementById('titulo').textContent = `${z.nome} · painel do LZ`;
+  document.getElementById('subtitulo').textContent = `${z.lz} · ${z.duplas.length} duplas · semana encerrada em ${dataBR(SEMANAS[W])}`;
+  document.getElementById('tituloResumo').textContent = `Como está a ${z.nome} nesta semana`;
+
+  /* 1. frases + pessoas */
+  document.getElementById('frases').innerHTML = `
+    <p class="frase"><b>${k.emDia} de ${k.ativos}</b> alunos estão em dia.
+      <small>Cerca de ${emCada10(pct(k.emDia, k.ativos))} em cada 10. Na semana passada eram ${k0.emDia}.</small></p>
+    <p class="frase ${semContato ? 'alerta' : 'bem'}"><b>${semContato}</b> ${semContato === 1 ? 'aluno em alerta ainda não recebeu' : 'alunos em alerta ainda não receberam'} contato.
+      <small>${k.contatados} de ${k.alertas} alunos em alerta já foram contatados nos últimos 7 dias.</small></p>
+    <p class="frase ${precisam ? 'alerta' : 'bem'}"><b>${precisam} de ${z.duplas.length}</b> duplas precisam de apoio.
+      <small>Veja abaixo o que sugerimos para cada uma.</small></p>`;
+  document.getElementById('pessoas').innerHTML = pessoas(k);
+
+  /* 2. os três KPIs combinados */
+  const presP = pct(k.presP, k.presM), presP0 = pct(k0.presP, k0.presM);
+  document.getElementById('metricas').innerHTML = `
+    <div class="metrica">
+      <h3>Alunos ativos</h3><p class="pergunta">Quantos continuam no curso?</p>
+      <p class="grande">${k.ativos} <span>de ${k.total}</span></p>
+      ${barra({rot:'Continuam no curso', n:k.ativos, de:k.total, meta:REGRAS.metaAtivos})}
+      <p class="exp">${plural(k.total - k.ativos, 'aluno desistiu', 'alunos desistiram')} neste bloco.</p>
+      ${mudanca(k.ativos, k0.ativos, true)}
+    </div>
+    <div class="metrica">
+      <h3>Entraram no Canvas</h3><p class="pergunta">Quantos abriram o Canvas nos últimos 7 dias?</p>
+      <p class="grande">${k.canvas} <span>de ${k.ativos}</span></p>
+      ${barra({rot:'Abriram o Canvas', n:k.canvas, de:k.ativos, meta:REGRAS.metaCanvas})}
+      <p class="exp">${plural(k.semCanvas, 'aluno está', 'alunos estão')} há 7 dias ou mais sem entrar.</p>
+      ${mudanca(k.canvas, k0.canvas, true)}
+    </div>
+    <div class="metrica">
+      <h3>Presença nos encontros</h3><p class="pergunta">De cada 10 chamadas, quantas foram presença?</p>
+      <p class="grande">${emCada10(presP)} <span>em cada 10 (${presP}%)</span></p>
+      ${barra({rot:'Presenças no bloco', n:k.presP, de:k.presM, meta:REGRAS.metaPresenca, modo:'pct'})}
+      <p class="exp">${plural(k.faltou, 'aluno faltou', 'alunos faltaram')} ao último encontro${k.seguidas ? `, ${k.seguidas} pela 2ª vez seguida ou mais` : ''}.</p>
+      ${mudanca(presP, presP0, true, v => v + '%')}
+    </div>`;
+
+  /* 3. cartões das duplas */
+  document.getElementById('duplas').innerHTML = linhas.map(({d, kd, ap}) => `
+    <article class="item ${ap.nivel}">
+      <div class="item-topo">
+        <div><h3>${esc(d.casal)}</h3><p>${d.turma} · ${kd.ativos} alunos ativos · números de ${dataCurta(d.atualizado)}</p></div>
+        ${pillNivel(ap)}
+      </div>
+      <p class="porque">Por quê: ${esc(ap.motivos.join('; '))}.</p>
+      ${barra({rot:'Alunos em dia', n:kd.emDia, de:kd.ativos, meta:REGRAS.emDiaAmarelo})}
+      ${barra({rot:'Alertas com contato', n:kd.contatados, de:kd.alertas, meta:REGRAS.contatoAmarelo})}
+      ${barra({rot:'Entraram no Canvas', n:kd.canvas, de:kd.ativos, meta:REGRAS.metaCanvas})}
+      <div class="acao"><b>O que fazer:</b> ${esc(acaoDupla(d, kd, ap))}</div>
+    </article>`).join('');
+
+  /* 4. tendência */
+  document.getElementById('tendencia').innerHTML = tendencias(z.duplas);
+
+  /* tabela opcional, para quem prefere */
+  document.getElementById('tabela').innerHTML = `
+    <thead><tr><th>Dupla</th><th class="num">Ativos</th><th class="num">Em dia</th><th class="num">Entraram no Canvas</th>
+      <th class="num">Presença</th><th class="num">Faltaram ao último (2+ seguidas)</th><th class="num">Alertas com contato</th><th>Situação</th></tr></thead>
+    <tbody>${linhas.map(({d, kd, ap}) => `<tr>
+      <td>${esc(d.casal)} <span class="muted">· ${d.turma}</span></td>
+      <td class="num">${kd.ativos} de ${kd.total}</td><td class="num">${kd.emDia} de ${kd.ativos}</td>
+      <td class="num">${kd.canvas} de ${kd.ativos}</td><td class="num">${pct(kd.presP, kd.presM)}%</td>
+      <td class="num">${kd.faltou} (${kd.seguidas})</td><td class="num">${kd.contatados} de ${kd.alertas}</td>
+      <td>${pillNivel(ap)}</td></tr>`).join('')}
+    </tbody>`;
+}
+desenhar();
+</script>
+</body>
+</html>
